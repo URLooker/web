@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "salt": "have fun!",
     "past": 30,
     "http": {
