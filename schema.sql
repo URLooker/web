@@ -1,4 +1,5 @@
 CREATE DATABASE `urlooker`;
+USE urlooker;
 
 DROP TABLE IF EXISTS `strategy`;
 CREATE TABLE `strategy` (
