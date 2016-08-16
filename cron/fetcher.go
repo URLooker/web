@@ -26,7 +26,7 @@ func getDetectedItem() {
 	}
 
 	for _, s := range stras {
-		_, domain, _ := utils.ParseUrl(s.Url)
+		_, domain, _, _ := utils.ParseUrl(s.Url)
 		ipIdcArr := getIpAndIdc(domain)
 
 		for _, tmp := range ipIdcArr {
@@ -53,13 +53,22 @@ func getIpAndIdc(domain string) []g.IpIdc {
 	}
 
 	ipIdcArr := make([]g.IpIdc, 0)
-	ips, _ := utils.LookupIP(domain, 5000)
-	for _, ip := range ips {
+
+	if utils.IsIP(domain) {
 		var tmp g.IpIdc
-		tmp.Ip = ip
+		tmp.Ip = domain
 		tmp.Idc = "default"
 		ipIdcArr = append(ipIdcArr, tmp)
+	} else {
+		ips, _ := utils.LookupIP(domain, 5000)
+		for _, ip := range ips {
+			var tmp g.IpIdc
+			tmp.Ip = ip
+			tmp.Idc = "default"
+			ipIdcArr = append(ipIdcArr, tmp)
+		}
 	}
+
 	return ipIdcArr
 }
 
@@ -76,8 +85,13 @@ func newDetectedItem(s *model.Strategy, ip string, idc string) g.DetectedItem {
 		Timeout:    s.Timeout,
 	}
 
-	schema, domain, path := utils.ParseUrl(s.Url)
-	detectedItem.Target = schema + "//" + ip + path
+	schema, domain, port, path := utils.ParseUrl(s.Url)
+	if port == "" {
+		detectedItem.Target = schema + "//" + ip + path
+	} else {
+		detectedItem.Target = schema + "//" + ip + ":" + port + path
+	}
+
 	detectedItem.Domain = domain
 
 	return detectedItem

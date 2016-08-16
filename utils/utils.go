@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 	"time"
@@ -28,17 +29,22 @@ func IsIP(ip string) bool {
 	return false
 }
 
-func ParseUrl(target string) (string, string, string) {
-	var path string
+func ParseUrl(target string) (schema, host, port, path string) {
 	targetArr := strings.Split(target, "//")
-	schema := targetArr[0]
+	schema = targetArr[0]
 	url := strings.Split(targetArr[1], "/")
-	host := url[0]
+	addrArr := strings.Split(url[0], ":")
+	if len(addrArr) == 2 {
+		host = addrArr[0]
+		port = addrArr[1]
+	} else {
+		host = url[0]
+	}
 
 	for _, seg := range url[1:] {
 		path += ("/" + seg)
 	}
-	return schema, host, path
+	return
 }
 
 func KeysOfMap(m map[string]string) []string {
