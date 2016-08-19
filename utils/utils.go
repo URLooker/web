@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 	"time"

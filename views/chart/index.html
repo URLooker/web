@@ -8,8 +8,9 @@
 
     <body>
     <div id="main"></div>
-
+    {{ if .AlarmOn }}
     <div id="event">
+    <div id="alarm_title">告警历史</div>
     <table class="table table-hover table-bordered table-striped">
             <thead>
             <tr>
@@ -34,7 +35,9 @@
                 {{end}}
             </tbody>
         </table>
+
        </div>
+       {{ end }}
 
 
     <script type="text/javascript">

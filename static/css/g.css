@@ -45,6 +45,11 @@
 	padding-bottom:15px;
 }
 
+#alarm_title{
+	text-align:center;
+	margin-top: 20px;
+}
+
 .col-sm-2 {
 	padding-right:0px;
 	padding-left:0px;

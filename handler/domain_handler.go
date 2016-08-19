@@ -48,6 +48,7 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 	strategy, err := model.GetStrategyById(sid)
 	errors.MaybePanic(err)
 
+	render.Data(r, "AlarmOn", g.Config.Alarm.Enable)
 	render.Data(r, "TimeData", timeData)
 	render.Data(r, "Id", sid)
 	render.Data(r, "Url", strategy.Url)
