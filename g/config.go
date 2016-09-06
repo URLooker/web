@@ -45,7 +45,7 @@ type AlarmConfig struct {
 type FalconConfig struct {
 	Enable   bool   `json:"enable"`
 	Addr     string `json:"addr"`
-	Interval int    `json:"intreval"`
+	Interval int    `json:"interval"`
 }
 
 type InternalDnsConfig struct {
