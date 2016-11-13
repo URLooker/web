@@ -13,7 +13,7 @@ Web组件主要用于
 # set $GOPATH and $GOROOT
 mkdir -p $GOPATH/src/github.com/urlooker
 cd $GOPATH/src/github.com/urlooker
-git clone https://github.com/URLooker/web.git
+git clone https://github.com/xiaolezheng/web.git
 cd web
 go get ./...
 ./control build
