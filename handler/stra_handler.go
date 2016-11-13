@@ -46,6 +46,7 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		var s = model.Strategy{}
 		s.Creator = me.Name
 		s.Url = url
+		s.Method = param.String(r, "method", "GET")
 		s.ExpectCode = param.String(r, "expect_code", "200")
 		s.Timeout = param.Int(r, "timeout", 3000)
 		s.MaxStep = param.Int(r, "max_step", 3)
@@ -54,6 +55,7 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		s.Note = param.String(r, "note", "")
 		s.Keywords = param.String(r, "keywords", "")
 		s.Data = param.String(r, "data", "")
+		s.PostData = param.String(r, "post_data", "")
 		s.Tag = tagStr
 
 		_, err = s.Add()
@@ -110,6 +112,7 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 
 	s.Creator = username
 	s.Url = url
+	s.Method = param.String(r, "method", "GET")
 	s.ExpectCode = param.String(r, "expect_code", "200")
 	s.Timeout = param.Int(r, "timeout", 3000)
 	s.MaxStep = param.Int(r, "max_step", 3)
@@ -118,6 +121,7 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 	s.Note = param.String(r, "note", "")
 	s.Keywords = param.String(r, "keywords", "")
 	s.Data = param.String(r, "data", "")
+	s.PostData = param.String(r, "post_data", "")
 	s.Tag = tagStr
 
 	err = s.Update()

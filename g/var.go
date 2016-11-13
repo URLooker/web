@@ -14,11 +14,13 @@ type DetectedItem struct {
 	Sid        int64  `json:"sid"`
 	Domain     string `json:"domain"`
 	Target     string `json:"target"`
+	Method     string `json:"method"`
 	Ip         string `json:"ip"`
 	Keywords   string `json:"keywords"`
 	Timeout    int    `json:"timeout"`
 	Creator    string `json:"creator"`
 	Data       string `json:"data"`
+	PostData   string `json:"post_data`
 	Tag        string `json:"tag"`
 	ExpectCode string `json:"expect_code"`
 	Idc        string `json:"idc"`

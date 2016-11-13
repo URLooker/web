@@ -9,12 +9,14 @@ import (
 type Strategy struct {
 	Id         int64  `json:"id"`
 	Url        string `json:"url"`
+	Method     string `json:"method"`
 	Keywords   string `json:"keywords"`
 	Timeout    int    `json:"timeout"`
 	Creator    string `json:"creator"`
 	ExpectCode string `json:"expect_code"`
 	Note       string `json:"note"`
 	Data       string `json:"data"`
+	PostData   string `json:"postData"`
 	Tag        string `json:"tag"`
 	MaxStep    int    `json:"max_step"`
 	Times      int    `json:"times"`

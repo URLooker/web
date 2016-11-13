@@ -19,6 +19,17 @@
         </div>
       </div>
       <div class='form-group'>
+        <label class='control-label' for='TargetNeedToMonitor'>方法</label>
+        <div class="input-group">
+          <select id="method">
+            <option value="GET" selected>GET</option>
+            <option value="PUT">PUT</option>
+            <option value="POST">POST</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+      </div>
+      <div class='form-group'>
         <label for='TargetNeedToMonitor'>期望返回状态码</label>
         <div class='controls'>
           <input class='form-control' type='text' placeholder='默认为 200' id='expect_code'/>
@@ -67,6 +78,11 @@
           <div class='form-group'>
           <label for='TargetNeedToMonitor'>Cookie</label>
             <input class='form-control' type='text' placeholder='监控要登录状态访问的url时填写' id='data'></input>
+          </div>
+
+          <div class='form-group'>
+          <label for='TargetNeedToMonitor'>提交数据</label>
+            <input class='form-control' type='text' placeholder='提交的数据,method为非GET时' id='post_data'></input>
           </div>
 
           <div class='form-group'>
