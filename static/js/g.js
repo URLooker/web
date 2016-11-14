@@ -76,7 +76,7 @@ function get_strategy(id){
 function update_strategy(id){
     $.post('/strategy/' + id + '/edit', {
       "url": $('#url').val(),
-      "method": $('method').val(),
+      "method": $('#method').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),
@@ -95,7 +95,7 @@ function update_strategy(id){
 function add_strategy() {
     $.post("/strategy/add", {
       "url": $('#url').val(),
-      "method": $('method').val(),
+      "method": $('#method').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),
