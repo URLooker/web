@@ -16,7 +16,7 @@ type Strategy struct {
 	ExpectCode string `json:"expect_code"`
 	Note       string `json:"note"`
 	Data       string `json:"data"`
-	PostData   string `json:"postData"`
+	PostData   string `json:"post_data"`
 	Tag        string `json:"tag"`
 	MaxStep    int    `json:"max_step"`
 	Times      int    `json:"times"`
