@@ -1,0 +1,78 @@
+{
+	"ImportPath": "github.com/urlooker/web",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v75",
+	"Deps": [
+		{
+			"ImportPath": "github.com/astaxie/beego/httplib",
+			"Comment": "v1.6.1-5-g88c5dfa",
+			"Rev": "88c5dfa6ead42e624c2e7d9e04eab6cb2d07412a"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v0.1-70-gc7477ad",
+			"Rev": "c7477ad8e330bef55bf1ebe300cf8aa67c492d1b"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-194-g7ebe0a5",
+			"Rev": "7ebe0a500653eeb1859664bed5e48dec1e164e73"
+		},
+		{
+			"ImportPath": "github.com/go-xorm/core",
+			"Comment": "v0.5.2-1-gb9277f8",
+			"Rev": "b9277f807c011387baed9748a45f26da65b42077"
+		},
+		{
+			"ImportPath": "github.com/go-xorm/xorm",
+			"Comment": "v0.5.2-6-g21d219c",
+			"Rev": "21d219c8725c658cee4c9026efb448ecac8e3ed1"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.1",
+			"Rev": "0eeaf8392f5b04950925b8a69fe70f110fa7cbfc"
+		},
+		{
+			"ImportPath": "github.com/gorilla/securecookie",
+			"Comment": "v1.1",
+			"Rev": "667fe4e3466a040b780561fe9b51a83a3753eefc"
+		},
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Rev": "c9d1302d540edfb97d9ecbfe90b4fb515088630b"
+		},
+		{
+			"ImportPath": "github.com/toolkits/container/list",
+			"Rev": "ba7d73adeaca8dc16c676dedbbb48cc46d3eccb0"
+		},
+		{
+			"ImportPath": "github.com/toolkits/core",
+			"Rev": "0ebf14900fe2ef12a8a19a0c04711538531d51e3"
+		},
+		{
+			"ImportPath": "github.com/toolkits/file",
+			"Rev": "a5b3c5147e07f934d9f9d00b901a20b2529f1a57"
+		},
+		{
+			"ImportPath": "github.com/toolkits/str",
+			"Rev": "29a153db8892174849cb83986a2c942375977d61"
+		},
+		{
+			"ImportPath": "github.com/toolkits/web",
+			"Rev": "dc0f03327e1d58851ef88fca6e8008ffb6de806a"
+		},
+		{
+			"ImportPath": "github.com/unrolled/render",
+			"Rev": "198ad4d8b8a4612176b804ca10555b222a086b40"
+		},
+		{
+			"ImportPath": "stathat.com/c/consistent",
+			"Rev": "748f01b59d1b2218efe39513039e9ee31266d7c7"
+		}
+	]
+}
