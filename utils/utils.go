@@ -11,11 +11,10 @@ import (
 	"github.com/urlooker/web/g"
 )
 
-func Getkey(idc string) string {
+func Getkey(idc string, sid int) string {
 	keys := g.Config.MonitorMap[idc]
 	count := len(keys)
-	now := int(time.Now().Unix())
-	return keys[now%count]
+	return keys[sid%count]
 }
 
 func IsIP(ip string) bool {

@@ -83,7 +83,7 @@ type GetItemResponse struct {
 func (this *Web) GetItem(hostname string, resp *GetItemResponse) error {
 	items, exists := g.DetectedItemMap.Get(hostname)
 	if !exists {
-		resp.Message = "no found"
+		resp.Message = "no found item assigned to " + hostname
 	}
 	resp.Data = items
 	return nil

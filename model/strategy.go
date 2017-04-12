@@ -1,8 +1,6 @@
 package model
 
 import (
-	"log"
-
 	. "github.com/urlooker/web/store"
 )
 
@@ -27,16 +25,13 @@ func GetAllStrategyCount(mine int, query, username string) (int64, error) {
 			return Orm.Where("url LIKE ? AND creator = ? ORDER BY id", "%"+query+"%", username).Count(new(Strategy))
 		} else {
 			num, err := Orm.Where("creator = ?", username).Count(new(Strategy))
-			log.Println(err)
 			return num, err
 		}
 	} else {
 		if query != "" {
 			return Orm.Where("url LIKE ? ORDER BY id", "%"+query+"%").Count(new(Strategy))
 		} else {
-			log.Println("orm:", Orm)
 			num, err := Orm.Count(new(Strategy))
-			log.Println(err)
 			return num, err
 		}
 	}

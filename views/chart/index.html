@@ -15,6 +15,7 @@
             <thead>
             <tr>
                 <th>Status</th>
+                <th>上报值</th>
                 <th>Url</th>
                 <th>Ip</th>
                 <th>返回码</th>
@@ -26,6 +27,7 @@
                 {{range .Events}}
                 <tr>
                 	<td width="20%">{{.Status}}</td>
+                    <td width="10%">{{.Results}}</td>
                     <td id="item_target" width="35%" style="word-wrap:break-word;word-break:break-all;">{{.Url}}</td>
                     <td width="10%">{{.Ip}}</td>
                     <td width="10%">{{.RespCode}}</td>

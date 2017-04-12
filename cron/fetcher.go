@@ -31,7 +31,7 @@ func getDetectedItem() {
 
 		for _, tmp := range ipIdcArr {
 			detectedItem := newDetectedItem(s, tmp.Ip, tmp.Idc)
-			key := utils.Getkey(tmp.Idc)
+			key := utils.Getkey(tmp.Idc, int(detectedItem.Sid))
 
 			if _, exists := detectedItemMap[key]; exists {
 				detectedItemMap[key] = append(detectedItemMap[key], &detectedItem)
