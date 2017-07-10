@@ -11,20 +11,21 @@ import (
 )
 
 type ItemStatus struct {
-	Id       int64  `json:"id"`
-	Sid      int64  `json:"sid"`
-	Ip       string `json:"ip"`
-	RespTime int    `json:"resp_time"`
-	RespCode string `json:"resp_code"`
-	PushTime int64  `json:"push_time"`
-	Result   int64  `json:"result"`
+	Id         int64  `json:"id"`
+	Sid        int64  `json:"sid"`
+	Ip         string `json:"ip"`
+	MonitorIdc string `json:"monitor_idc"`
+	RespTime   int    `json:"resp_time"`
+	RespCode   string `json:"resp_code"`
+	PushTime   int64  `json:"push_time"`
+	Result     int64  `json:"result"`
 }
 
 var ItemStatusRepo *ItemStatus
 
 func (this *ItemStatus) Save() error {
-	sql := fmt.Sprintf("insert into item_status00 (ip, sid, resp_time, resp_code, push_time, result) value(?,?,?,?,?,?)")
-	_, err := Orm.Exec(sql, this.Ip, this.Sid, this.RespTime, this.RespCode, this.PushTime, this.Result)
+	sql := fmt.Sprintf("insert into item_status00 (ip, sid, resp_time, resp_code, push_time, result, monitor_idc) value(?,?,?,?,?,?,?)")
+	_, err := Orm.Exec(sql, this.Ip, this.Sid, this.RespTime, this.RespCode, this.PushTime, this.Result, this.MonitorIdc)
 	return err
 }
 

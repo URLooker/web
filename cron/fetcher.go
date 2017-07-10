@@ -53,19 +53,26 @@ func getIpAndIdc(domain string) []g.IpIdc {
 	}
 
 	ipIdcArr := make([]g.IpIdc, 0)
+	monitorMap := g.Config.MonitorMap
 
 	if utils.IsIP(domain) {
 		var tmp g.IpIdc
-		tmp.Ip = domain
-		tmp.Idc = "default"
-		ipIdcArr = append(ipIdcArr, tmp)
+		for idc, _ := range monitorMap {
+
+			tmp.Ip = domain
+			tmp.Idc = idc
+			ipIdcArr = append(ipIdcArr, tmp)
+		}
+
 	} else {
 		ips, _ := utils.LookupIP(domain, 5000)
 		for _, ip := range ips {
 			var tmp g.IpIdc
-			tmp.Ip = ip
-			tmp.Idc = "default"
-			ipIdcArr = append(ipIdcArr, tmp)
+			for idc, _ := range monitorMap {
+				tmp.Ip = ip
+				tmp.Idc = idc
+				ipIdcArr = append(ipIdcArr, tmp)
+			}
 		}
 	}
 

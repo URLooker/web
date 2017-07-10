@@ -83,13 +83,14 @@ CREATE TABLE `event` (
 
 DROP TABLE IF EXISTS `item_status00`;
 CREATE TABLE `item_status00` (
-  `id`        INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  `sid`       INT UNSIGNED  NOT NULL,
-  `ip`        VARCHAR(32)   NOT NULL DEFAULT '',
-  `resp_time` INT(6),
-  `resp_code` VARCHAR(3),
-  `push_time` INT(10),
-  `result`    INT(1)        NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err', 
+  `id`           INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+  `sid`          INT UNSIGNED  NOT NULL,
+  `ip`           VARCHAR(32)   NOT NULL DEFAULT '',
+  `monitor_idc`  VARCHAR(32)   NOT NULL DEFAULT '',
+  `resp_time`    INT(6),
+  `resp_code`    VARCHAR(3),
+  `push_time`    INT(10),
+  `result`       INT(1)        NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err', 
   PRIMARY KEY (`id`),
   INDEX `idx_ip` (`ip`),
   INDEX `idx_sid` (`sid`)

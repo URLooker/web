@@ -18,12 +18,13 @@ type SendResultReq struct {
 func (this *Web) SendResult(req SendResultReq, reply *string) error {
 	for _, arg := range req.CheckResults {
 		itemStatus := model.ItemStatus{
-			Ip:       arg.Ip,
-			Sid:      arg.Sid,
-			RespTime: arg.RespTime,
-			RespCode: arg.RespCode,
-			PushTime: arg.PushTime,
-			Result:   arg.Status,
+			Ip:         arg.Ip,
+			Sid:        arg.Sid,
+			RespTime:   arg.RespTime,
+			RespCode:   arg.RespCode,
+			PushTime:   arg.PushTime,
+			Result:     arg.Status,
+			MonitorIdc: arg.MonitorIdc,
 		}
 
 		relSidIp := model.RelSidIp{

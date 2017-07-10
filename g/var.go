@@ -26,16 +26,17 @@ type DetectedItem struct {
 
 //agent上报的数据结构
 type CheckResult struct {
-	Sid      int64  `json:"sid"`
-	Domain   string `json:"domain"`
-	Target   string `json:"target"`
-	Creator  string `json:"creator"`
-	Tag      string `json:"tag"`
-	RespCode string `json:"resp_code"`
-	RespTime int    `json:"resp_time"`
-	Status   int64  `json:"status"`
-	PushTime int64  `json:"push_time"`
-	Ip       string `json:"ip"`
+	Sid        int64  `json:"sid"`
+	Domain     string `json:"domain"`
+	Target     string `json:"target"`
+	Creator    string `json:"creator"`
+	Tag        string `json:"tag"`
+	RespCode   string `json:"resp_code"`
+	RespTime   int    `json:"resp_time"`
+	Status     int64  `json:"status"`
+	PushTime   int64  `json:"push_time"`
+	Ip         string `json:"ip"`
+	MonitorIdc string `json:"monitor_idc"`
 }
 
 type DetectedItemSafeMap struct {
