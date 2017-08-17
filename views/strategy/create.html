@@ -63,6 +63,12 @@
               <input class='form-control' type='text' placeholder='用于检索是否异常' id='keywords'></input>
             </div>
           </div>
+          <div class='form-group'>
+            <label for='TargetNeedToMonitor'>机房</label>
+            <div class='controls'>
+              <input class='form-control' type='text' placeholder='支持机房 {{.Idcs}} 用逗号分隔,不填表示全选' id='monitor_idc' vaule="default"></input>
+            </div>
+          </div>
           
           <div class='form-group'>
           <label for='TargetNeedToMonitor'>Cookie</label>

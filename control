@@ -74,7 +74,7 @@ function build() {
 function pack() {
     build
     version=`./$app -v`
-    tar zcvf $app-$version.tar.gz control cfg.example.json $app
+    tar zcvf $app-$version.tar.gz control cfg.json $app static views schema.sql
 }
 
 function packbin() {

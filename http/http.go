@@ -20,5 +20,6 @@ func Start() {
 	n := negroni.New()
 	n.Use(middleware.NewRecovery())
 	n.UseHandler(r)
+	n.Use(middleware.NewLogger())
 	n.Run(g.Config.Http.Listen)
 }

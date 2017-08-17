@@ -64,6 +64,7 @@ function get_strategy(id){
     $("#timeout").val(res.data.timeout)
     $("#data").val(res.data.data)
     $("#keywords").val(res.data.keywords)
+    $("#monitor_idc").val(res.data.monitor_idc)
     $("#note").val(res.data.note)
     $("#times").val(res.data.times)
     $("#max_step").val(res.data.max_step)
@@ -82,6 +83,7 @@ function update_strategy(id){
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
+      "monitor_idc": $('#monitor_idc').val(),
       "data": $('#data').val()
     }, function(json) {
       handle_json(json, function (){location.reload()})
@@ -99,6 +101,7 @@ function add_strategy() {
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
+      "monitor_idc": $('#monitor_idc').val(),
       "data": $('#data').val()
     }, function(json){
         handle_json(json, function(){

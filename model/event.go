@@ -14,6 +14,7 @@ type Event struct {
 	Ip          string `json:"ip"`
 	EventTime   int64  `json:"event_time"`
 	StrategyId  int64  `json:"strategy_id"`
+	MonitorIdc  string `json:"monitor_idc"`
 	RespTime    int    `json:"resp_time"`
 	RespCode    string `json:"resp_code"`
 	Result      int64  `json:"result"`

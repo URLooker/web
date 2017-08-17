@@ -2,6 +2,7 @@ package cron
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/urlooker/web/g"
@@ -30,14 +31,17 @@ func getDetectedItem() {
 		ipIdcArr := getIpAndIdc(domain)
 
 		for _, tmp := range ipIdcArr {
-			detectedItem := newDetectedItem(s, tmp.Ip, tmp.Idc)
-			key := utils.Getkey(tmp.Idc, int(detectedItem.Sid))
+			if strings.Contains(s.MonitorIdc, tmp.Idc) {
+				detectedItem := newDetectedItem(s, tmp.Ip, tmp.Idc)
+				key := utils.Getkey(tmp.Idc, int(detectedItem.Sid))
 
-			if _, exists := detectedItemMap[key]; exists {
-				detectedItemMap[key] = append(detectedItemMap[key], &detectedItem)
-			} else {
-				detectedItemMap[key] = []*g.DetectedItem{&detectedItem}
+				if _, exists := detectedItemMap[key]; exists {
+					detectedItemMap[key] = append(detectedItemMap[key], &detectedItem)
+				} else {
+					detectedItemMap[key] = []*g.DetectedItem{&detectedItem}
+				}
 			}
+
 		}
 	}
 
@@ -45,36 +49,45 @@ func getDetectedItem() {
 }
 
 func getIpAndIdc(domain string) []g.IpIdc {
-
-	//公司内部提供接口，拿到域名解析的ip和机房列表
-	if g.Config.InternalDns.Enable {
-		ipIdcArr := utils.InternalDns(domain)
-		return ipIdcArr
-	}
-
 	ipIdcArr := make([]g.IpIdc, 0)
 	monitorMap := g.Config.MonitorMap
-
-	if utils.IsIP(domain) {
+	for idc, _ := range monitorMap {
 		var tmp g.IpIdc
-		for idc, _ := range monitorMap {
+		tmp.Ip = domain
+		tmp.Idc = idc
+		ipIdcArr = append(ipIdcArr, tmp)
+	}
 
-			tmp.Ip = domain
-			tmp.Idc = idc
-			ipIdcArr = append(ipIdcArr, tmp)
+	/*
+		//公司内部提供接口，拿到域名解析的ip和机房列表
+		if g.Config.InternalDns.Enable {
+			ipIdcArr := utils.InternalDns(domain)
+			return ipIdcArr
 		}
 
-	} else {
-		ips, _ := utils.LookupIP(domain, 5000)
-		for _, ip := range ips {
+		ipIdcArr := make([]g.IpIdc, 0)
+		monitorMap := g.Config.MonitorMap
+
+		if utils.IsIP(domain) {
 			var tmp g.IpIdc
 			for idc, _ := range monitorMap {
-				tmp.Ip = ip
+
+				tmp.Ip = domain
 				tmp.Idc = idc
 				ipIdcArr = append(ipIdcArr, tmp)
 			}
-		}
-	}
+
+		} else {
+			ips, _ := utils.LookupIP(domain, 5000)
+			for _, ip := range ips {
+				var tmp g.IpIdc
+				for idc, _ := range monitorMap {
+					tmp.Ip = ip
+					tmp.Idc = idc
+					ipIdcArr = append(ipIdcArr, tmp)
+				}
+			}
+		}*/
 
 	return ipIdcArr
 }

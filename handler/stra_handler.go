@@ -14,6 +14,8 @@ import (
 )
 
 func AddStrategyGet(w http.ResponseWriter, r *http.Request) {
+	idcs := utils.GetAllIdc()
+	render.Data(r, "Idcs", idcs)
 	render.HTML(r, w, "strategy/create")
 }
 
@@ -54,6 +56,12 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		s.Note = param.String(r, "note", "")
 		s.Keywords = param.String(r, "keywords", "")
 		s.Data = param.String(r, "data", "")
+		monitorIdc := param.String(r, "monitor_idc", "")
+		if monitorIdc == "" {
+			monitorIdc = utils.GetAllIdc()
+		}
+
+		s.MonitorIdc = monitorIdc
 		s.Tag = tagStr
 
 		_, err = s.Add()
@@ -118,6 +126,7 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 	s.Note = param.String(r, "note", "")
 	s.Keywords = param.String(r, "keywords", "")
 	s.Data = param.String(r, "data", "")
+	s.MonitorIdc = param.String(r, "monitor_idc", "")
 	s.Tag = tagStr
 
 	err = s.Update()

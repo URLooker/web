@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/urlooker/web/g"
 	"github.com/urlooker/web/http/errors"
@@ -12,8 +13,9 @@ import (
 )
 
 type Url struct {
-	Ip     string              `json:"ip"`
-	Status []*model.ItemStatus `json:"status"`
+	Ip         string              `json:"ip"`
+	MonitorIdc string              `json:"monitor_idc"`
+	Status     []*model.ItemStatus `json:"status"`
 }
 
 func UrlStatus(w http.ResponseWriter, r *http.Request) {
@@ -22,15 +24,28 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 	sidIpIndex, err := model.RelSidIpRepo.GetBySid(sid)
 	errors.MaybePanic(err)
 
+	stra, err := model.GetStrategyById(sid)
+	errors.MaybePanic(err)
+
+	idcs := strings.Split(stra.MonitorIdc, ",")
+
 	urlArr := make([]Url, 0)
 	for _, index := range sidIpIndex {
-		url := Url{
-			Ip: index.Ip,
-		}
-		url.Status, err = model.ItemStatusRepo.GetByIpAndSid(index.Ip, index.Sid)
-		errors.MaybePanic(err)
+		for _, idc := range idcs {
+			status, err := model.ItemStatusRepo.GetByIpSidIdc(index.Ip, idc, index.Sid)
+			if len(status) < 1 {
+				continue
+			}
+			errors.MaybePanic(err)
 
-		urlArr = append(urlArr, url)
+			url := Url{
+				Ip:         index.Ip,
+				MonitorIdc: status[0].MonitorIdc,
+			}
+			url.Status = status
+
+			urlArr = append(urlArr, url)
+		}
 	}
 
 	//绘图使用，时间轴

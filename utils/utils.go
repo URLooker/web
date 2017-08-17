@@ -78,3 +78,11 @@ func TimeFormat(ts int64) string {
 
 	return fmt.Sprintf("%s:%s", arr[0], arr[1])
 }
+
+func GetAllIdc() string {
+	var idcs []string
+	for idc, _ := range g.Config.MonitorMap {
+		idcs = append(idcs, idc)
+	}
+	return strings.Join(idcs, ",")
+}

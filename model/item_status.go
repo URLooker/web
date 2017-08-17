@@ -38,9 +38,27 @@ func (this *ItemStatus) GetByIpAndSid(ip string, sid int64) ([]*ItemStatus, erro
 	return itemStatusArr, err
 }
 
+func (this *ItemStatus) GetBySidIdc(ip, idc string, sid int64) ([]*ItemStatus, error) {
+	itemStatusArr := make([]*ItemStatus, 0)
+	ts := time.Now().Unix() - int64(g.Config.Past*60)
+	sql := fmt.Sprintf("select * from item_status00 where ip=? and sid=? and monitor_idc = ? and push_time > ?")
+
+	err := Orm.Sql(sql, ip, sid, idc, ts).Find(&itemStatusArr)
+	return itemStatusArr, err
+}
+
+func (this *ItemStatus) GetByIpSidIdc(ip, idc string, sid int64) ([]*ItemStatus, error) {
+	itemStatusArr := make([]*ItemStatus, 0)
+	ts := time.Now().Unix() - int64(g.Config.Past*60)
+	sql := fmt.Sprintf("select * from item_status00 where ip=? and sid=? and monitor_idc = ? and push_time > ?")
+
+	err := Orm.Sql(sql, ip, sid, idc, ts).Find(&itemStatusArr)
+	return itemStatusArr, err
+}
+
 func (this *ItemStatus) PK() string {
 	h := md5.New()
-	io.WriteString(h, fmt.Sprintf("%s/%s", this.Sid, this.Ip))
+	io.WriteString(h, fmt.Sprintf("%s/%s/%s", this.Sid, this.Ip, this.MonitorIdc))
 
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
