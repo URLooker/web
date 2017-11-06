@@ -19,18 +19,18 @@
                 <th>Url</th>
                 <th>Ip</th>
                 <th>返回码</th>
-                <th>响应时间</th>
+                <th>响应时间(ms)</th>
                 <th>时间</th>
             </tr>
             </thead>
             <tbody>
                 {{range .Events}}
                 <tr>
-                	<td width="20%">{{.Status}}</td>
-                    <td width="10%">{{.Result}}</td>
+                	<td width="10%">{{.Status}}</td>
+                    <td width="5%">{{.Result}}</td>
                     <td id="item_target" width="35%" style="word-wrap:break-word;word-break:break-all;">{{.Url}}</td>
                     <td width="10%">{{.Ip}}</td>
-                    <td width="10%">{{.RespCode}}</td>
+                    <td width="5%">{{.RespCode}}</td>
                     <td width="10%">{{.RespTime}}</td>
                     <td width="20%">{{HumenTime .EventTime}}</td>
                 </tr>
