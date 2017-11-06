@@ -57,8 +57,8 @@ func (this *Web) SendResult(req SendResultReq, reply *string) error {
 			Q := sender.SendQueues[node]
 			isSuccess := Q.PushFront(itemStatus)
 			if !isSuccess {
-				log.Println("error:", err)
-				*reply = "save item error:" + err.Error()
+				log.Println("push itemStatus error:", itemStatus)
+				*reply = "push itemStatus error"
 				return nil
 			}
 		}
