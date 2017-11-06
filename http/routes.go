@@ -15,6 +15,7 @@ func ConfigRouter(r *mux.Router) {
 	configAuthRoutes(r)
 	configUserRoutes(r)
 	configTeamRoutes(r)
+	configProcRoutes(r)
 }
 
 func configDomainRoutes(r *mux.Router) {
@@ -63,6 +64,11 @@ func configTeamRoutes(r *mux.Router) {
 	r.HandleFunc("/team/{tid:[0-9]+}/edit", handler.UpdateTeamGet).Methods("GET")
 	r.HandleFunc("/team/{tid:[0-9]+}/edit", handler.UpdateTeamPost).Methods("POST")
 	r.HandleFunc("/team/{tid:[0-9]+}/users", handler.GetUsersOfTeam).Methods("GET")
+}
+
+func configProcRoutes(r *mux.Router) {
+	//r.HandleFunc("/log", handler.GetLog).Methods("GET")
+	r.HandleFunc("/version", handler.Version).Methods("GET")
 }
 
 func configStaticRoutes(r *mux.Router) {

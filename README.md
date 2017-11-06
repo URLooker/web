@@ -7,6 +7,10 @@ Web组件主要用于
 - 告警组人员管理
 - 查看url访问质量绘图
 
+## 常见问题
+- [wiki说明][1]
+- [常见问题][2]
+
 ## Installation
 
 ```bash
@@ -67,3 +71,6 @@ cd web
 
 ```
 
+
+  [1]: https://github.com/URLooker/wiki
+  [2]: https://github.com/URLooker/wiki/wiki/FAQ

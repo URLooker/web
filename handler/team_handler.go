@@ -36,11 +36,11 @@ func TeamsPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	render.Data(r, "Teams", teams)
-	render.Data(r, "Query", query)
-	render.Data(r, "Pager", pager)
-	render.Data(r, "Me", me)
-	render.Data(r, "Title", "Team")
+	render.Put(r, "Teams", teams)
+	render.Put(r, "Query", query)
+	render.Put(r, "Pager", pager)
+	render.Put(r, "Me", me)
+	render.Put(r, "Title", "Team")
 	render.HTML(r, w, "team/index")
 }
 
@@ -51,21 +51,21 @@ func TeamsJson(w http.ResponseWriter, r *http.Request) {
 	limit := param.Int(r, "limit", 10)
 
 	if str.HasDangerousCharacters(query) {
-		render.AutoJSON(w, fmt.Errorf("query invalid"), nil)
+		render.Data(w, fmt.Errorf("query invalid"))
 		return
 	}
 
 	teams, err := model.QueryTeams(query, limit)
 	errors.MaybePanic(err)
 
-	render.AutoJSON(w, nil, map[string]interface{}{"teams": teams})
+	render.Data(w, map[string]interface{}{"teams": teams})
 }
 
 func CreateTeamGet(w http.ResponseWriter, r *http.Request) {
 	me := MeRequired(LoginRequired(w, r))
 
-	render.Data(r, "Me", me)
-	render.Data(r, "Title", "Team")
+	render.Put(r, "Me", me)
+	render.Put(r, "Title", "Team")
 	render.HTML(r, w, "team/create")
 }
 
@@ -106,13 +106,15 @@ func CreateTeamPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := model.AddTeam(name, resume, me.Id, uids)
-	render.AutoJSON(w, err)
+	render.MaybeError(w, err)
 }
 
 func UpdateTeamGet(w http.ResponseWriter, r *http.Request) {
 	team := TeamRequired(r)
 	me := MeRequired(LoginRequired(w, r))
-	UserMustBeMemberOfTeam(me.Id, team.Id)
+	if !IsAdmin(me.Name) {
+		UserMustBeMemberOfTeam(me.Id, team.Id)
+	}
 
 	uids := make([]string, 0)
 	users, err := model.UsersOfTeam(team.Id)
@@ -121,17 +123,19 @@ func UpdateTeamGet(w http.ResponseWriter, r *http.Request) {
 		uids = append(uids, strconv.FormatInt(user.Id, 10))
 	}
 
-	render.Data(r, "Team", team)
-	render.Data(r, "Uids", strings.Join(uids, ","))
-	render.Data(r, "Me", me)
-	render.Data(r, "Title", "Team")
+	render.Put(r, "Team", team)
+	render.Put(r, "Uids", strings.Join(uids, ","))
+	render.Put(r, "Me", me)
+	render.Put(r, "Title", "Team")
 	render.HTML(r, w, "team/edit")
 }
 
 func UpdateTeamPost(w http.ResponseWriter, r *http.Request) {
 	me := MeRequired(LoginRequired(w, r))
 	team := TeamRequired(r)
-	UserMustBeMemberOfTeam(me.Id, team.Id)
+	if !IsAdmin(me.Name) {
+		UserMustBeMemberOfTeam(me.Id, team.Id)
+	}
 
 	team.Resume = param.String(r, "resume", "")
 	if str.HasDangerousCharacters(team.Resume) {
@@ -152,7 +156,7 @@ func UpdateTeamPost(w http.ResponseWriter, r *http.Request) {
 		uids = append(uids, uid)
 	}
 
-	render.AutoJSON(w, team.Update(uids))
+	render.Data(w, team.Update(uids))
 }
 
 func GetUsersOfTeam(w http.ResponseWriter, r *http.Request) {
@@ -161,5 +165,5 @@ func GetUsersOfTeam(w http.ResponseWriter, r *http.Request) {
 
 	users, err := model.UsersOfTeam(team.Id)
 	errors.MaybePanic(err)
-	render.JSON(w, map[string]interface{}{"users": users})
+	render.Data(w, users)
 }

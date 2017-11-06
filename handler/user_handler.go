@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/toolkits/str"
@@ -31,12 +30,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userid, err := model.UserRegister(username, utils.EncryptPassword(password))
 	errors.MaybePanic(err)
 
-	render.AutoJSON(w, cookie.WriteUser(w, userid, username))
+	render.Data(w, cookie.WriteUser(w, userid, username))
 }
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
-	render.Data(r, "Title", "register")
-	render.Data(r, "callback", param.String(r, "callback", "/"))
+	render.Put(r, "Title", "register")
+	render.Put(r, "callback", param.String(r, "callback", "/"))
 	render.HTML(r, w, "auth/register")
 }
 
@@ -46,8 +45,8 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginPage(w http.ResponseWriter, r *http.Request) {
-	render.Data(r, "Title", "login")
-	render.Data(r, "callback", param.String(r, "callback", "/"))
+	render.Put(r, "Title", "login")
+	render.Put(r, "callback", param.String(r, "callback", "/"))
 	render.HTML(r, w, "auth/login")
 }
 
@@ -62,11 +61,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	userid, err := model.UserLogin(username, utils.EncryptPassword(password))
 	errors.MaybePanic(err)
 
-	render.AutoJSON(w, cookie.WriteUser(w, userid, username))
+	render.Data(w, cookie.WriteUser(w, userid, username))
 }
 
 func MeJson(w http.ResponseWriter, r *http.Request) {
-	render.AutoJSON(w, nil, MeRequired(LoginRequired(w, r)))
+	render.Data(w, MeRequired(LoginRequired(w, r)))
 }
 
 func UsersJson(w http.ResponseWriter, r *http.Request) {
@@ -74,14 +73,19 @@ func UsersJson(w http.ResponseWriter, r *http.Request) {
 	query := param.String(r, "query", "")
 	limit := param.Int(r, "limit", 10)
 	if str.HasDangerousCharacters(query) {
-		render.AutoJSON(w, fmt.Errorf("query invalid"), nil)
+		errors.Panic("query invalid")
 		return
 	}
 
 	users, err := model.QueryUsers(query, limit)
+	for _, u := range users {
+		t := *u
+		t.Name = "n1ng"
+		users = append(users, &t)
+	}
 	errors.MaybePanic(err)
 
-	render.JSON(w, map[string]interface{}{"users": users})
+	render.Data(w, users)
 }
 
 func UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
@@ -105,11 +109,12 @@ func UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 		errors.Panic("微信不合法")
 	}
 
+	me.Cnname = cnname
 	me.Email = email
 	me.Phone = phone
 	me.Wechat = wechat
 	errors.MaybePanic(me.UpdateProfile())
-	render.AutoJSON(w, nil)
+	render.Data(w, "ok")
 }
 
 func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
@@ -129,5 +134,6 @@ func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
 		cookie.RemoveUser(w)
 	}
 
-	render.AutoJSON(w, err)
+	errors.MaybePanic(err)
+	render.Data(w, "ok")
 }

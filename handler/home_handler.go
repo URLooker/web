@@ -29,9 +29,9 @@ func HomeIndex(w http.ResponseWriter, r *http.Request) {
 	strategies, err := model.GetAllStrategy(mine, limit, pager.Offset(), query, username)
 
 	errors.MaybePanic(err)
-	render.Data(r, "Strategies", strategies)
-	render.Data(r, "Pager", pager)
-	render.Data(r, "Mine", mine)
-	render.Data(r, "Query", query)
+	render.Put(r, "Strategies", strategies)
+	render.Put(r, "Pager", pager)
+	render.Put(r, "Mine", mine)
+	render.Put(r, "Query", query)
 	render.HTML(r, w, "home/index")
 }

@@ -47,7 +47,7 @@ $(function() {
         id: function(obj){return obj.id;},
         initSelection: function(element, callback) {
             $.getJSON("/team/{{.Team.Id}}/users", function(json) {
-                callback(json.users);
+                callback(json.data);
             });
         },
         ajax: {
@@ -60,7 +60,7 @@ $(function() {
                 };
             },
             results: function(json, page) {
-                return {results: json.users};
+                return {results: json.data};
             }
         },
         formatResult: function(obj) {return obj.name + "["+obj.cnname+"]" + "["+obj.email+"]"},

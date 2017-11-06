@@ -30,6 +30,7 @@ function show_profile_page() {
       return
     }
     $("#username").val(json.data.name);
+    $("#cnname").val(json.data.cnname);
     $("#email").val(json.data.email);
     $("#phone").val(json.data.phone);
     $("#qq").val(json.data.qq);
@@ -72,6 +73,7 @@ function get_strategy(id){
 };
 
 function update_strategy(id){
+    var url = '/url?id='+id
     $.post('/strategy/' + id + '/edit', {
       "url": $('#url').val(),
       "expect_code": $('#expect_code').val(),
@@ -84,7 +86,7 @@ function update_strategy(id){
       "keywords": $('#keywords').val(),
       "data": $('#data').val()
     }, function(json) {
-      handle_json(json, function (){location.reload()})
+      handle_json(json, function (){location.href=url})
     });
 }
 
@@ -102,7 +104,7 @@ function add_strategy() {
       "data": $('#data').val()
     }, function(json){
         handle_json(json, function(){
-            location.href=$("/").val();
+          location.href="/";
         });
     });
 }
@@ -132,6 +134,7 @@ function login() {
 
 function update_profile() {
     $.post("/me/profile", {
+        "cnname": $("#cnname").val(),
         "email": $("#email").val(),
         "phone": $("#phone").val(),
         "wechat": $("#wechat").val()

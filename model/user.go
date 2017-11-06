@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	. "github.com/urlooker/web/store"
@@ -21,11 +22,11 @@ type User struct {
 
 func GetUserById(id int64) (*User, error) {
 	var obj User
-	has, err := Orm.Where("id=?", id).Get(&obj)
+	has, err := Orm.Cols("id", "name", "cnname", "email", "phone", "wechat").Where("id=?", id).Get(&obj)
 	if err != nil || !has {
 		return nil, err
 	}
-
+	obj.Password = ""
 	return &obj, nil
 }
 
@@ -36,7 +37,7 @@ func GetUserByName(name string) (*User, error) {
 	}
 
 	var obj User
-	has, err := Orm.Where("name=?", name).Get(&obj)
+	has, err := Orm.Cols("id", "name", "cnname", "email", "phone", "wechat").Where("name=?", name).Get(&obj)
 	if err != nil || !has {
 		return nil, err
 	}
@@ -50,7 +51,7 @@ func QueryUsers(query string, limit int) ([]*User, error) {
 		return users, nil
 	}
 
-	err := Orm.Where("name LIKE ?", "%"+query+"%").Limit(limit).Find(&users)
+	err := Orm.Cols("id", "name", "cnname", "email", "phone", "wechat").Where("name LIKE ?", "%"+query+"%").Limit(limit).Find(&users)
 	if err != nil {
 		return users, err
 	}
@@ -92,6 +93,7 @@ func UserLogin(name, password string) (int64, error) {
 }
 
 func (this *User) UpdateProfile() error {
+	log.Println(this)
 	_, err := Orm.Id(this.Id).Update(this)
 	if err != nil {
 		return err

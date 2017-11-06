@@ -55,7 +55,7 @@ $(function() {
                 };
             },
             results: function(json, page) {
-                return {results: json.users};
+                return {results: json.data};
             }
         },
         formatResult: function(obj) {return obj.name + "["+obj.cnname+"]" + "["+obj.email+"]"},

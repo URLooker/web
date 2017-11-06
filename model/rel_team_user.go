@@ -38,7 +38,7 @@ func TeamCountOfUser(query string, uid int64) (int64, error) {
 func UsersOfTeam(tid int64) ([]*User, error) {
 	users := make([]*User, 0)
 
-	err := Orm.Sql("SELECT * FROM user WHERE id IN ( SELECT uid FROM rel_team_user WHERE tid=? )", tid).Find(&users)
+	err := Orm.Cols("id", "name", "cnname", "email", "phone", "wechat").Sql("SELECT * FROM user WHERE id IN ( SELECT uid FROM rel_team_user WHERE tid=? )", tid).Find(&users)
 	if err != nil {
 		return users, err
 	}
@@ -49,7 +49,7 @@ func UsersOfTeam(tid int64) ([]*User, error) {
 func UsersInfoOfTeam(tid int64) ([]*User, error) {
 	users := make([]*User, 0)
 
-	err := Orm.Cols("name", "email", "phone", "wechat").Sql("SELECT * FROM user WHERE id IN ( SELECT uid FROM rel_team_user WHERE tid=? )", tid).Find(&users)
+	err := Orm.Cols("name", "cnname", "email", "phone", "wechat").Sql("SELECT * FROM user WHERE id IN ( SELECT uid FROM rel_team_user WHERE tid=? )", tid).Find(&users)
 	if err != nil {
 		return users, err
 	}

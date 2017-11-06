@@ -6,6 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/toolkits/str"
+
+	"github.com/urlooker/web/g"
 	"github.com/urlooker/web/http/cookie"
 	"github.com/urlooker/web/http/errors"
 	"github.com/urlooker/web/model"
@@ -42,6 +44,26 @@ func LoginRequired(w http.ResponseWriter, r *http.Request) (int64, string) {
 	}
 
 	return userid, username
+}
+
+func AdminRequired(id int64, name string) {
+	user, err := model.GetUserById(id)
+	if err != nil {
+		panic(errors.InternalServerError(err.Error()))
+	}
+
+	if user == nil {
+		panic(errors.NotLoginError())
+	}
+
+	for _, admin := range g.Config.Admins {
+		if user.Name == admin {
+			return
+		}
+	}
+
+	panic(errors.NotLoginError())
+	return
 }
 
 func MeRequired(id int64, name string) *model.User {
@@ -85,4 +107,13 @@ func UserMustBeMemberOfTeam(uid, tid int64) {
 	}
 
 	panic(errors.BadRequestError("用户不是团队的成员"))
+}
+
+func IsAdmin(username string) bool {
+	for _, admin := range g.Config.Admins {
+		if username == admin {
+			return true
+		}
+	}
+	return false
 }

@@ -55,6 +55,7 @@ type InternalDnsConfig struct {
 
 type GlobalConfig struct {
 	Debug       bool                `json:"debug"`
+	Admins      []string            `json:"admins"`
 	Salt        string              `json:"salt"`
 	Past        int                 `json:"past"`
 	Http        *HttpConfig         `json:"http"`

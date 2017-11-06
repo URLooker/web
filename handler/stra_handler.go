@@ -49,7 +49,7 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		s.ExpectCode = param.String(r, "expect_code", "200")
 		s.Timeout = param.Int(r, "timeout", 3000)
 		s.MaxStep = param.Int(r, "max_step", 3)
-		s.Teams = param.String(r, "teams", "")
+		s.Teams = param.MustString(r, "teams")
 		s.Times = param.Int(r, "times", 3)
 		s.Note = param.String(r, "note", "")
 		s.Keywords = param.String(r, "keywords", "")
@@ -60,21 +60,26 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			msg += fmt.Sprintf("strategy:%s failed, err:%s", url, err.Error())
 		} else {
-			msg += fmt.Sprintf("strategy:%s success :)")
+			msg += fmt.Sprintf("strategy:%s success :)", url)
 		}
 	}
 
-	render.AutoJSON(w, err, msg)
+	//errors.MaybePanic(err)
+	if err != nil {
+		errMsg := fmt.Sprintf("%s,err:%v", msg, err)
+		errors.Panic(errMsg)
+	}
+	render.Data(w, msg)
 }
 
 func GetStrategyById(w http.ResponseWriter, r *http.Request) {
 	strategy := StraRequired(r)
-	render.AutoJSON(w, nil, strategy)
+	render.Data(w, strategy)
 }
 
 func UpdateStrategyGet(w http.ResponseWriter, r *http.Request) {
 	s := StraRequired(r)
-	render.Data(r, "Id", s.Id)
+	render.Put(r, "Id", s.Id)
 	render.HTML(r, w, "strategy/edit")
 }
 
@@ -84,7 +89,7 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 	var tagStr string
 
 	username := me.Name
-	if s.Creator != username && s.Creator != "qinyening" {
+	if s.Creator != username && !IsAdmin(username) {
 		errors.Panic("没有权限")
 	}
 
@@ -121,7 +126,8 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 	s.Tag = tagStr
 
 	err = s.Update()
-	render.AutoJSON(w, err)
+	errors.MaybePanic(err)
+	render.Data(w, "ok")
 }
 
 func DeleteStrategy(w http.ResponseWriter, r *http.Request) {
@@ -130,17 +136,19 @@ func DeleteStrategy(w http.ResponseWriter, r *http.Request) {
 	//teams := strings.Split(strategy.Teams, ",")
 
 	username := me.Name
-	if strategy.Creator != username && strategy.Creator != "qinyening" {
+	if strategy.Creator != username && !IsAdmin(username) {
 		errors.Panic("没有权限")
 	}
 
 	err := strategy.Delete()
-	render.AutoJSON(w, err)
+	errors.MaybePanic(err)
+	render.Data(w, "ok")
 }
 
 func GetTeamsOfStrategy(w http.ResponseWriter, r *http.Request) {
 	MeRequired(LoginRequired(w, r))
 	stra := StraRequired(r)
 	teams, err := model.GetTeamsByIds(stra.Teams)
-	render.AutoJSON(w, err, map[string]interface{}{"teams": teams})
+	errors.MaybePanic(err)
+	render.Data(w, map[string]interface{}{"teams": teams})
 }

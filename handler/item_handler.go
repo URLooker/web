@@ -13,8 +13,8 @@ func GetHostIpItem(w http.ResponseWriter, r *http.Request) {
 	ipItem, exists := g.DetectedItemMap.Get(hostname)
 	log.Println(ipItem)
 	if !exists {
-		render.JSON(w, "")
+		render.Data(w, "")
 		return
 	}
-	render.JSON(w, ipItem)
+	render.Data(w, ipItem)
 }

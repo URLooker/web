@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -77,4 +80,66 @@ func TimeFormat(ts int64) string {
 	arr = strings.Split(t, ":")
 
 	return fmt.Sprintf("%s:%s", arr[0], arr[1])
+}
+
+func ReadLastLine(filename string) (string, error) {
+	var previousOffset int64 = 0
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+
+	// we need to calculate the size of the last line for file.ReadAt(offset) to work
+
+	// NOTE : not a very effective solution as we need to read
+	// the entire file at least for 1 pass :(
+
+	lastLineSize := 0
+	for {
+		line, _, err := reader.ReadLine()
+		if err == io.EOF {
+			break
+		}
+
+		lastLineSize = len(line)
+	}
+
+	fileInfo, err := os.Stat(filename)
+	if err != nil {
+		return "", err
+	}
+
+	// make a buffer size according to the lastLineSize
+	// +1 to compensate for the initial 0 byte of the line
+	// otherwise, the initial character of the line will be missing
+	// instead of reading the whole file into memory, we just read from certain offset
+
+	l := int64(lastLineSize) * 30
+
+	if fileInfo.Size() < l {
+		l = fileInfo.Size() - 1
+	}
+	buffer := make([]byte, l)
+
+	offset := fileInfo.Size() - int64(l+1)
+	numRead, err := f.ReadAt(buffer, offset)
+	if err != nil && err != io.EOF {
+		return "", err
+	}
+
+	if previousOffset != offset {
+
+		// print out last line content
+		buffer = buffer[:numRead]
+		fmt.Printf("%s \n", buffer)
+
+		previousOffset = offset
+	}
+	//res := strings.Split(string(buffer), "\n")
+	return string(buffer), nil
 }

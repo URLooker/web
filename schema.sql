@@ -67,6 +67,7 @@ CREATE TABLE `rel_sid_ip` (
 DROP TABLE IF EXISTS `event`;
 CREATE TABLE `event` (
   `id`          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `event_id`    VARCHAR(64)     NOT NULL,
   `status`      VARCHAR(32)     NOT NULL,
   `url`         VARCHAR(256)    NOT NULL DEFAULT '',
   `ip`          VARCHAR(32)     NOT NULL DEFAULT '',

@@ -8,7 +8,8 @@ import (
 )
 
 type Event struct {
-	Id          string `json:"id"`
+	Id          int64  `json:"id"`
+	EventId     string `json:"event_id"`
 	Status      string `json:"status"`
 	Url         string `json:"url"`
 	Ip          string `json:"ip"`
@@ -37,8 +38,9 @@ func (this *Event) GetByStrategyId(strategyId int64, before int) ([]*Event, erro
 
 func (this *Event) String() string {
 	return fmt.Sprintf(
-		"<Id:%s, Ip:%s, Url:%s, EventTime:%v, StrategyId:%d, RespTime:%s, RespCode:%s, Status:%s, (%d/%d)>",
+		"<Id:%s, EventId:,%s Ip:%s, Url:%s, EventTime:%v, StrategyId:%d, RespTime:%s, RespCode:%s, Status:%s, (%d/%d)>",
 		this.Id,
+		this.EventId,
 		this.Ip,
 		this.Url,
 		this.EventTime,
