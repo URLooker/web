@@ -33,6 +33,9 @@ func (rec *Recovery) ServeHTTP(w http.ResponseWriter, r *http.Request, next http
 	defer func() {
 		if err := recover(); err != nil {
 			if customError, ok := err.(errors.Error); ok {
+				msg := fmt.Sprintf("[%s:%d] %s [Error:]%s", customError.File, customError.Line, customError.Time, customError.Msg)
+				log.Printf(msg)
+
 				if isAjax(r) {
 					render.Message(w, customError.Msg)
 					return

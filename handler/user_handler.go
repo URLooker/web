@@ -119,7 +119,9 @@ func UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 
 func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
 
-	me := MeRequired(LoginRequired(w, r))
+	uid, _ := LoginRequired(w, r)
+	me, err := model.GetUserPwById(uid)
+	errors.MaybePanic(err)
 
 	oldPasswd := param.MustString(r, "old_password")
 	newPasswd := param.MustString(r, "new_password")
@@ -129,7 +131,7 @@ func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
 		errors.Panic("两次输入的密码不一致")
 	}
 
-	err := me.ChangePasswd(utils.EncryptPassword(oldPasswd), utils.EncryptPassword(newPasswd))
+	err = me.ChangePasswd(utils.EncryptPassword(oldPasswd), utils.EncryptPassword(newPasswd))
 	if err == nil {
 		cookie.RemoveUser(w)
 	}

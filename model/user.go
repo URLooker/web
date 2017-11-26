@@ -30,6 +30,30 @@ func GetUserById(id int64) (*User, error) {
 	return &obj, nil
 }
 
+func GetUserPwById(id int64) (*User, error) {
+	var obj User
+	has, err := Orm.Cols("id", "name", "password").Where("id=?", id).Get(&obj)
+	if err != nil || !has {
+		return nil, err
+	}
+	return &obj, nil
+}
+
+// 先根据name获取id，再根据id去查询
+func CheckPw(name string, passwd string) (*User, error) {
+	if name == "" {
+		return nil, nil
+	}
+
+	var obj User
+	has, err := Orm.Cols("id", "name", "cnname", "email", "phone", "wechat").Where("name=? and password=?", name, passwd).Get(&obj)
+	if err != nil || !has {
+		return nil, err
+	}
+
+	return &obj, nil
+}
+
 // 先根据name获取id，再根据id去查询
 func GetUserByName(name string) (*User, error) {
 	if name == "" {
@@ -78,14 +102,11 @@ func UserRegister(name, password string) (int64, error) {
 }
 
 func UserLogin(name, password string) (int64, error) {
-	user, err := GetUserByName(name)
+	user, err := CheckPw(name, password)
 	if err != nil {
 		return 0, err
 	}
 	if user == nil {
-		return 0, fmt.Errorf("系统中没有该用户%s", name)
-	}
-	if user.Password != password {
 		return 0, fmt.Errorf("密码不正确")
 	}
 
