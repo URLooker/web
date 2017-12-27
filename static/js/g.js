@@ -61,9 +61,11 @@ function get_strategy(id){
   url = "/strategy/" + id
   $.post(url, {}, function(res){
     $("#url").val(res.data.url)
+    $("#method").val(res.data.method)
     $("#expect_code").val(res.data.expect_code)
     $("#timeout").val(res.data.timeout)
     $("#data").val(res.data.data)
+    $("#post_data").val(res.data.post_data)
     $("#keywords").val(res.data.keywords)
     $("#note").val(res.data.note)
     $("#times").val(res.data.times)
@@ -76,6 +78,7 @@ function update_strategy(id){
     var url = '/url?id='+id
     $.post('/strategy/' + id + '/edit', {
       "url": $('#url').val(),
+      "method": $('#method').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),
@@ -84,7 +87,8 @@ function update_strategy(id){
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
-      "data": $('#data').val()
+      "data": $('#data').val(),
+      "post_data": $('#post_data').val()
     }, function(json) {
       handle_json(json, function (){location.href=url})
     });
@@ -93,6 +97,7 @@ function update_strategy(id){
 function add_strategy() {
     $.post("/strategy/add", {
       "url": $('#url').val(),
+      "method": $('#method').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),
@@ -101,7 +106,8 @@ function add_strategy() {
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
-      "data": $('#data').val()
+      "data": $('#data').val(),
+      "post_data": $('#post_data').val()
     }, function(json){
         handle_json(json, function(){
           location.href="/";

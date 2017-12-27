@@ -23,6 +23,17 @@
         </div>
       </div>
       <div class='form-group'>
+        <label class='control-label' for='TargetNeedToMonitor'>方法</label>
+        <div class="input-group">
+          <select id="method">
+            <option value="GET">GET</option>
+            <option value="PUT">PUT</option>
+            <option value="POST">POST</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+      </div>
+      <div class='form-group'>
         <label for='TargetNeedToMonitor'>期望返回状态码(可填1个数字：4 表示4** 2个数字40 表示40*  3个数字403)</label>
         <div class='controls'>
           <input class='form-control' type='text' placeholder='用于检索是否异常' id='expect_code' value=""/>
@@ -72,7 +83,10 @@
           <label for='TargetNeedToMonitor'>Cookie</label>
             <input class='form-control' type='text' placeholder='需要POST的数据(get方法不用填写)' id='data'></input>
           </div>
-
+          <div class='form-group'>
+          <label for='TargetNeedToMonitor'>提交数据</label>
+            <input class='form-control' type='text' placeholder='提交的数据,method为非GET时' id='post_data'></input>
+          </div>
           <div class='form-group'>
             <label for='TargetNeedToMonitor'>tags</label>
             <textarea type="text" class="form-control " id='tags' value="" placeholder="向falcon推送数据时使用, 形式为 a=b 每行一个"/></textarea>

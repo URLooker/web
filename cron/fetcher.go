@@ -80,6 +80,8 @@ func newDetectedItem(s *model.Strategy, ip string, idc string) g.DetectedItem {
 		Sid:        s.Id,
 		Keywords:   s.Keywords,
 		Data:       s.Data,
+		Method:     s.Method,
+		PostData:   s.PostData,
 		Tag:        s.Tag,
 		ExpectCode: s.ExpectCode,
 		Timeout:    s.Timeout,

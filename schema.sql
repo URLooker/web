@@ -5,10 +5,12 @@ DROP TABLE IF EXISTS `strategy`;
 CREATE TABLE `strategy` (
   `id`          int(10)         unsigned NOT NULL AUTO_INCREMENT,
   `url`         varchar(1024)   NOT NULL,
+  `method`      varchar(10)     NOT NULL DEFAULT 'GET',
   `keywords`    varchar(255)    NOT NULL DEFAULT '',
   `timeout`     varchar(255)    NOT NULL DEFAULT '',
   `creator`     varchar(255)    NOT NULL DEFAULT '',
   `data`        varchar(255)    NOT NULL DEFAULT '',
+  `post_data`    varchar(1000)   NOT NULL DEFAULT '',
   `expect_code` varchar(255)    NOT NULL DEFAULT '',
   `tag`         varchar(255)    NOT NULL DEFAULT '',
   `note`        varchar(255)    NOT NULL DEFAULT '',
