@@ -64,6 +64,7 @@ function get_strategy(id){
     $("#expect_code").val(res.data.expect_code)
     $("#timeout").val(res.data.timeout)
     $("#data").val(res.data.data)
+    $("#ip").val(res.data.ip)
     $("#keywords").val(res.data.keywords)
     $("#note").val(res.data.note)
     $("#times").val(res.data.times)
@@ -84,7 +85,8 @@ function update_strategy(id){
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
-      "data": $('#data').val()
+      "data": $('#data').val(),
+      "ip": $('#ip').val()
     }, function(json) {
       handle_json(json, function (){location.href=url})
     });
@@ -101,7 +103,8 @@ function add_strategy() {
       "tags": $('#tags').val(),
       "note": $('#note').val(),
       "keywords": $('#keywords').val(),
-      "data": $('#data').val()
+      "data": $('#data').val(),
+      "ip": $('#ip').val()
     }, function(json){
         handle_json(json, function(){
           location.href="/";

@@ -7,6 +7,7 @@ import (
 type Strategy struct {
 	Id         int64  `json:"id"`
 	Url        string `json:"url"`
+	IP         string `json:"ip" xorm:"ip"`
 	Keywords   string `json:"keywords"`
 	Timeout    int    `json:"timeout"`
 	Creator    string `json:"creator"`
@@ -77,7 +78,7 @@ func (this *Strategy) Add() (int64, error) {
 }
 
 func (this *Strategy) Update() error {
-	_, err := Orm.Where("id=?", this.Id).Cols("times", "max_step", "expect_code", "timeout", "url", "keywords", "note", "data", "tag", "teams").Update(this)
+	_, err := Orm.Where("id=?", this.Id).Cols("times", "max_step", "expect_code", "timeout", "url", "ip", "keywords", "note", "data", "tag", "teams").Update(this)
 	return err
 }
 

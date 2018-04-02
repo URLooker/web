@@ -23,12 +23,19 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 	errors.MaybePanic(err)
 
 	urlArr := make([]Url, 0)
-	for _, index := range sidIpIndex {
+	idx := 0
+	var ts int64 = 0
+	for i, index := range sidIpIndex {
 		url := Url{
 			Ip: index.Ip,
 		}
 		url.Status, err = model.ItemStatusRepo.GetByIpAndSid(index.Ip, index.Sid)
 		errors.MaybePanic(err)
+
+		if len(url.Status) > 0 && ts < url.Status[len(url.Status)-1].PushTime {
+			ts = url.Status[len(url.Status)-1].PushTime
+			idx = i
+		}
 
 		urlArr = append(urlArr, url)
 	}
@@ -36,11 +43,13 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 	//绘图使用，时间轴
 	var timeData []string
 	if len(urlArr) > 0 {
-		for _, item := range urlArr[0].Status {
+		for _, item := range urlArr[idx].Status {
 			t := utils.TimeFormat(item.PushTime)
 			timeData = append(timeData, t)
 		}
 	}
+
+	urlArr
 
 	events, err := model.EventRepo.GetByStrategyId(sid, g.Config.Past*60)
 	errors.MaybePanic(err)

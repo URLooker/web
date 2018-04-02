@@ -48,6 +48,16 @@ type FalconConfig struct {
 	Interval int    `json:"interval"`
 }
 
+type LdapConfig struct {
+	Enabled    bool     `json:"enabled"`
+	Addr       string   `json:"addr"`
+	BindDN     string   `json:"bindDN"`
+	BaseDN     string   `json:"baseDN`
+	BindPasswd string   `json:"bindPasswd"`
+	UserField  string   `json:"userField"`
+	Attributes []string `json:attributes`
+}
+
 type InternalDnsConfig struct {
 	Enable bool   `json:"enable"`
 	Addr   string `json:"addr"`
@@ -60,6 +70,7 @@ type GlobalConfig struct {
 	Past        int                 `json:"past"`
 	Http        *HttpConfig         `json:"http"`
 	Rpc         *RpcConfig          `json:"rpc"`
+	Ldap        *LdapConfig         `json:"ldap"`
 	Log         *LogConfig          `json:"log"`
 	Mysql       *MysqlConfig        `json:"mysql"`
 	Alarm       *AlarmConfig        `json:"alarm"`

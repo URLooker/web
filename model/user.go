@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	. "github.com/urlooker/web/store"
@@ -114,12 +113,16 @@ func UserLogin(name, password string) (int64, error) {
 }
 
 func (this *User) UpdateProfile() error {
-	log.Println(this)
 	_, err := Orm.Id(this.Id).Update(this)
 	if err != nil {
 		return err
 	}
 
+	return err
+}
+
+func (this *User) Save() error {
+	_, err := Orm.Insert(this)
 	return err
 }
 

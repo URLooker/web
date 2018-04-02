@@ -8,7 +8,8 @@ CREATE TABLE `strategy` (
   `keywords`    varchar(255)    NOT NULL DEFAULT '',
   `timeout`     varchar(255)    NOT NULL DEFAULT '',
   `creator`     varchar(255)    NOT NULL DEFAULT '',
-  `data`        varchar(255)    NOT NULL DEFAULT '',
+  `data`        varchar(1024)   NOT NULL DEFAULT '',
+  `ip`          varchar(255)    NOT NULL DEFAULT '',
   `expect_code` varchar(255)    NOT NULL DEFAULT '',
   `tag`         varchar(255)    NOT NULL DEFAULT '',
   `note`        varchar(255)    NOT NULL DEFAULT '',
@@ -17,6 +18,7 @@ CREATE TABLE `strategy` (
   `teams`       varchar(32)     NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+#ALTER TABLE strategy ADD ip varchar(255);
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (

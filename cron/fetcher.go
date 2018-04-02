@@ -2,6 +2,7 @@ package cron
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/urlooker/web/g"
@@ -10,24 +11,39 @@ import (
 )
 
 func GetDetectedItem() {
-	t1 := time.NewTicker(time.Duration(300) * time.Second)
+	t1 := time.NewTicker(time.Duration(60) * time.Second)
 	for {
-		getDetectedItem()
+		err := getDetectedItem()
+		if err != nil {
+			time.Sleep(time.Second * 1)
+			continue
+		}
 		<-t1.C
 	}
 }
 
-func getDetectedItem() {
+func getDetectedItem() error {
 	detectedItemMap := make(map[string][]*g.DetectedItem)
 	stras, err := model.GetAllStrategyByCron()
 	if err != nil {
 		log.Println("get strategies error:", err)
-		return
+		return err
 	}
 
 	for _, s := range stras {
 		_, domain, _, _ := utils.ParseUrl(s.Url)
-		ipIdcArr := getIpAndIdc(domain)
+		var ipIdcArr []g.IpIdc
+		if s.IP != "" {
+			ips := strings.Split(s.IP, ",")
+			for _, ip := range ips {
+				var tmp g.IpIdc
+				tmp.Ip = ip
+				tmp.Idc = "default"
+				ipIdcArr = append(ipIdcArr, tmp)
+			}
+		} else {
+			ipIdcArr = getIpAndIdc(domain)
+		}
 
 		for _, tmp := range ipIdcArr {
 			detectedItem := newDetectedItem(s, tmp.Ip, tmp.Idc)
@@ -41,7 +57,15 @@ func getDetectedItem() {
 		}
 	}
 
+	for k, v := range detectedItemMap {
+		log.Println(k)
+		for _, i := range v {
+			log.Println(i)
+		}
+	}
+
 	g.DetectedItemMap.Set(detectedItemMap)
+	return nil
 }
 
 func getIpAndIdc(domain string) []g.IpIdc {

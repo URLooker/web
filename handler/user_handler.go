@@ -2,10 +2,12 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/toolkits/str"
 	//"github.com/toolkits/web"
 
+	"github.com/urlooker/web/g"
 	"github.com/urlooker/web/http/cookie"
 	"github.com/urlooker/web/http/errors"
 	"github.com/urlooker/web/http/param"
@@ -15,6 +17,9 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
+	if g.Config.Ldap.Enabled {
+		errors.Panic("注册已关闭")
+	}
 	username := param.MustString(r, "username")
 	password := param.MustString(r, "password")
 	repeat := param.MustString(r, "repeat")
@@ -58,8 +63,68 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		errors.Panic("用户名不合法，请不要使用非法字符")
 	}
 
-	userid, err := model.UserLogin(username, utils.EncryptPassword(password))
-	errors.MaybePanic(err)
+	var u *model.User
+	var userid int64
+	if g.Config.Ldap.Enabled {
+		sucess, err := utils.LdapBind(g.Config.Ldap.Addr,
+			g.Config.Ldap.BaseDN,
+			g.Config.Ldap.BindDN,
+			g.Config.Ldap.BindPasswd,
+			g.Config.Ldap.UserField,
+			username,
+			password)
+
+		errors.MaybePanic(err)
+		if !sucess {
+			errors.Panic("name or password error")
+			return
+		}
+
+		userAttributes, err := utils.Ldapsearch(g.Config.Ldap.Addr,
+			g.Config.Ldap.BaseDN,
+			g.Config.Ldap.BindDN,
+			g.Config.Ldap.BindPasswd,
+			g.Config.Ldap.UserField,
+			username,
+			g.Config.Ldap.Attributes)
+		userSn := ""
+		userMail := ""
+		userTel := ""
+		if err == nil {
+			userSn = userAttributes["sn"]
+			userMail = userAttributes["mail"]
+			userTel = userAttributes["telephoneNumber"]
+		}
+
+		arr := strings.Split(username, "@")
+		var userName, userEmail string
+		if len(arr) == 2 {
+			userName = arr[0]
+			userEmail = username
+		} else {
+			userName = username
+			userEmail = userMail
+		}
+
+		u, err = model.GetUserByName(userName)
+		errors.MaybePanic(err)
+		if u == nil {
+			// 说明用户不存在
+			u = &model.User{
+				Name:     userName,
+				Password: "",
+				Cnname:   userSn,
+				Phone:    userTel,
+				Email:    userEmail,
+			}
+			errors.MaybePanic(u.Save())
+		}
+		userid = u.Id
+	} else {
+		var err error
+		userid, err = model.UserLogin(username, utils.EncryptPassword(password))
+		errors.MaybePanic(err)
+	}
 
 	render.Data(w, cookie.WriteUser(w, userid, username))
 }
