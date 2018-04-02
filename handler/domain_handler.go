@@ -49,8 +49,6 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	urlArr
-
 	events, err := model.EventRepo.GetByStrategyId(sid, g.Config.Past*60)
 	errors.MaybePanic(err)
 
