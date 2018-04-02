@@ -47,6 +47,10 @@
 			"Rev": "c9d1302d540edfb97d9ecbfe90b4fb515088630b"
 		},
 		{
+			"ImportPath": "github.com/mmitton/ldap",
+			"Rev": "2890b18948f26e61b62dc6878d0c14a708f0d57e"
+		},
+		{
 			"ImportPath": "github.com/toolkits/container/list",
 			"Rev": "ba7d73adeaca8dc16c676dedbbb48cc46d3eccb0"
 		},
@@ -69,6 +73,11 @@
 		{
 			"ImportPath": "github.com/unrolled/render",
 			"Rev": "198ad4d8b8a4612176b804ca10555b222a086b40"
+		},
+		{
+			"ImportPath": "gopkg.in/asn1-ber.v1",
+			"Comment": "v1.2",
+			"Rev": "379148ca0225df7a432012b8df0355c2a2063ac0"
 		},
 		{
 			"ImportPath": "stathat.com/c/consistent",
