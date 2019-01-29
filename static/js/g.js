@@ -77,6 +77,7 @@ function update_strategy(id){
     var url = '/url?id='+id
     $.post('/strategy/' + id + '/edit', {
       "url": $('#url').val(),
+      "enable": $('#enable').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),
@@ -95,6 +96,7 @@ function update_strategy(id){
 function add_strategy() {
     $.post("/strategy/add", {
       "url": $('#url').val(),
+      "enable": $('#enable').val(),
       "expect_code": $('#expect_code').val(),
       "timeout": $('#timeout').val(),
       "times": $('#times').val(),

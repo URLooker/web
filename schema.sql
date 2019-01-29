@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `strategy`;
 CREATE TABLE `strategy` (
   `id`          int(10)         unsigned NOT NULL AUTO_INCREMENT,
   `url`         varchar(1024)   NOT NULL,
+  `enable`      int(1)          NOT NULL DEFAULT 1,
   `keywords`    varchar(255)    NOT NULL DEFAULT '',
   `timeout`     varchar(255)    NOT NULL DEFAULT '',
   `creator`     varchar(255)    NOT NULL DEFAULT '',
@@ -19,6 +20,9 @@ CREATE TABLE `strategy` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 #ALTER TABLE strategy ADD ip varchar(255);
+#ALTER TABLE strategy ADD enable int(1) DEFAULT 1;
+
+
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (

@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -36,6 +37,8 @@ func LookupIP(domain string, timeout int) ([]string, error) {
 			ips = append(ips, result[4])
 		}
 	}
+
+	log.Println("ips:", ips)
 	return ips, err
 }
 

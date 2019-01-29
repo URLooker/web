@@ -67,7 +67,7 @@ type GlobalConfig struct {
 	Debug       bool                `json:"debug"`
 	Admins      []string            `json:"admins"`
 	Salt        string              `json:"salt"`
-	Past        int                 `json:"past"`
+	Past        int                 `json:"past"` //查看最近几分钟内的报警历史和绘图，默认为30分钟
 	Http        *HttpConfig         `json:"http"`
 	Rpc         *RpcConfig          `json:"rpc"`
 	Ldap        *LdapConfig         `json:"ldap"`

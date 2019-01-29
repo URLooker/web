@@ -27,20 +27,17 @@ func PushFalcon(itemCheckedArray []*g.CheckResult, hostname string) {
 
 	pushDatas := make([]*MetricValue, 0)
 	for _, itemChecked := range itemCheckedArray {
-		var data MetricValue
-		data.Metric = "url_status"
-		data.Endpoint = fmt.Sprintf("url_%d", itemChecked.Sid)
-		data.Timestamp = itemChecked.PushTime
-		data.Type = "GAUGE"
-		data.Step = int64(g.Config.Falcon.Interval)
-		data.Value = itemChecked.Status
-
-		if len(itemChecked.Tag) < 1 {
-			data.Tags = fmt.Sprintf("ip=%s,domain=%s,creator=%s,from=%s", itemChecked.Ip, itemChecked.Domain, itemChecked.Creator, hostname)
-		} else {
-			data.Tags = fmt.Sprintf("ip=%s,domain=%s,creator=%s,%s,from=%s", itemChecked.Ip, itemChecked.Domain, itemChecked.Creator, itemChecked.Tag, hostname)
+		tags := fmt.Sprintf("ip=%s,domain=%s,creator=%s,from=%s", itemChecked.Ip, itemChecked.Domain, itemChecked.Creator, hostname)
+		if len(itemChecked.Tag) > 0 { //补充用户自定义tag
+			tags += "," + itemChecked.Tag
 		}
 
+		//url 状态
+		data := getMetric(itemChecked, "url_status", tags, itemChecked.Status)
+		pushDatas = append(pushDatas, &data)
+
+		//url 响应时间
+		data = getMetric(itemChecked, "url_resp_time", tags, int64(itemChecked.RespTime))
 		pushDatas = append(pushDatas, &data)
 	}
 
@@ -50,11 +47,24 @@ func PushFalcon(itemCheckedArray []*g.CheckResult, hostname string) {
 	}
 }
 
+func getMetric(item *g.CheckResult, metric, tags string, value int64) MetricValue {
+	var data MetricValue
+	data.Endpoint = fmt.Sprintf("url_%d", item.Sid)
+	data.Timestamp = item.PushTime
+	data.Type = "GAUGE"
+	data.Step = int64(g.Config.Falcon.Interval)
+	data.Tags = tags
+	data.Value = value
+	return data
+}
+
 func push(data []*MetricValue) error {
 	d, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
+
+	log.Println("to falcon: ", string(d))
 
 	_, err = httplib.Post(g.Config.Falcon.Addr).Body(d).String()
 	if err != nil {

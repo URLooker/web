@@ -1,5 +1,6 @@
 {
     "debug": false,
+    "admins":["ning","admin"],
     "salt": "have fun!",
     "past": 30,
     "http": {

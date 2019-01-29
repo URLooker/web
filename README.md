@@ -10,6 +10,7 @@ Web组件主要用于
 ## 常见问题
 - [wiki说明][1]
 - [常见问题][2]
+- 初始用户名密码：admin/password
 
 ## Installation
 
@@ -27,8 +28,9 @@ cd web
 
 ```
 
-"debug": true,
+    "debug": true,
     "salt": "have fun!",
+    "admin":["admin"], #这里的用户是会变成admin用户
     "past": 30, #查看最近几分钟内的报警历史和绘图，默认为30分钟
     "http": {
         "listen": "0.0.0.0:1984",
@@ -55,9 +57,8 @@ cd web
             "node-1":"127.0.0.1:1986"
         }
     },
-    "monitorMap": { #配置哪些url由哪个机房的agent去监控，默认均由default列表中的agent去监控
+    "monitorMap": { 
         "default":["hostname.1"], #监控指标多了之后agent地址可以填多个
-        "idc1":["hostname.2"]
     },
     "falcon":{
         "enable": false, # 为true表示向falcon推送数据

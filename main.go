@@ -12,6 +12,7 @@ import (
 	"github.com/urlooker/web/g"
 	"github.com/urlooker/web/http"
 	"github.com/urlooker/web/http/cookie"
+	"github.com/urlooker/web/model"
 	"github.com/urlooker/web/sender"
 	"github.com/urlooker/web/store"
 )
@@ -40,6 +41,10 @@ func init() {
 }
 
 func main() {
+	err := model.AdminRegister()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	go api.Start()
 	http.Start()
 }

@@ -22,6 +22,20 @@ function check_pid() {
     return 0
 }
 
+function dev() {
+    check_pid
+    running=$?
+    if [ $running -gt 0 ];then
+        echo -n "$app now is running already, pid="
+        cat $pidfile
+        return 1
+    fi
+ 
+    nohup ./$app -c cfg.local.json >> $logfile 2>&1 &
+    echo $! > $pidfile
+    echo "$app started..., pid=$!"
+}
+
 function start() {
     check_pid
     running=$?
@@ -119,6 +133,8 @@ elif [ "$1" == "pid" ];then
     pid
 elif [ "$1" == "reload" ];then
     reload
+elif [ "$1" == "dev" ];then
+    dev
 else
     help
 fi

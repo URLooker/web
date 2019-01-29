@@ -82,6 +82,24 @@ func QueryUsers(query string, limit int) ([]*User, error) {
 	return users, nil
 }
 
+func AdminRegister() error {
+	count, err := Orm.Count(new(User))
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return nil
+	}
+
+	user := &User{Name: "admin", Password: "password"}
+	_, err = Orm.Insert(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func UserRegister(name, password string) (int64, error) {
 	user, err := GetUserByName(name)
 	if err != nil {

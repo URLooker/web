@@ -7,6 +7,7 @@ import (
 type Strategy struct {
 	Id         int64  `json:"id"`
 	Url        string `json:"url"`
+	Enable     int    `json:"enable"`
 	IP         string `json:"ip" xorm:"ip"`
 	Keywords   string `json:"keywords"`
 	Timeout    int    `json:"timeout"`
@@ -61,7 +62,7 @@ func GetAllStrategy(mine, limit, offset int, query, username string) ([]*Strateg
 
 func GetAllStrategyByCron() ([]*Strategy, error) {
 	strategies := make([]*Strategy, 0)
-	err := Orm.Find(&strategies)
+	err := Orm.Where("enable = 1").Find(&strategies)
 	return strategies, err
 }
 
@@ -78,7 +79,7 @@ func (this *Strategy) Add() (int64, error) {
 }
 
 func (this *Strategy) Update() error {
-	_, err := Orm.Where("id=?", this.Id).Cols("times", "max_step", "expect_code", "timeout", "url", "ip", "keywords", "note", "data", "tag", "teams").Update(this)
+	_, err := Orm.Where("id=?", this.Id).Cols("times", "max_step", "expect_code", "timeout", "url", "enable", "ip", "keywords", "note", "data", "tag", "teams").Update(this)
 	return err
 }
 

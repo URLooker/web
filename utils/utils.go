@@ -32,6 +32,7 @@ func IsIP(ip string) bool {
 
 func ParseUrl(target string) (schema, host, port, path string) {
 	targetArr := strings.Split(target, "//")
+
 	schema = targetArr[0]
 	url := strings.Split(targetArr[1], "/")
 	addrArr := strings.Split(url[0], ":")
