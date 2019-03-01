@@ -7,7 +7,6 @@ import (
 	"github.com/peng19940915/urlooker/web/http/errors"
 	"net/http"
 	"github.com/peng19940915/urlooker/web/http/render"
-	"runtime"
 )
 
 
@@ -20,7 +19,8 @@ func Recovery() gin.HandlerFunc {
 					msg := fmt.Sprintf("[%s:%d] %s %s", customError.File, customError.Line, customError.Time, customError.Msg)
 					log.Error(msg)
 					if isAjax(context) {
-						context.JSON(http.StatusInternalServerError, gin.H{"msg": customError.Msg})
+						context.JSON(http.StatusOK, map[string]string{"msg": customError.Msg})
+						return
 					}
 
 					if customError.Code == http.StatusUnauthorized || customError.Code == http.StatusForbidden {
@@ -30,11 +30,10 @@ func Recovery() gin.HandlerFunc {
 					render.HTML(http.StatusInternalServerError, context,"inc/error",gin.H{})
 					return
 				}
-				fmt.Println(err)
-				stack := make([]byte, 1024 * 8)
-				stack = stack[:runtime.Stack(stack, false)]
-				context.AbortWithStatus(500)
-				log.Errorf("[Recovery] %s panic recovered:\n%s\n%s", err, stack)
+				//stack := make([]byte, 1024 * 8)
+				//stack = stack[:runtime.Stack(stack, false)]
+				//context.AbortWithStatus(500)
+				//log.Errorf("[Recovery] %s panic recovered:\n%s\n%s", err, stack)
 			}
 		}()
 

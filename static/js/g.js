@@ -10,8 +10,9 @@ function succ(msg, f) {
 }
 
 function handle_json(json, f) {
-    if (json.msg.length > 0) {
-        err(json.msg);
+    var msg = json.msg;
+    if (msg.length > 0) {
+        err(msg);
     } else {
         succ('恭喜，操作成功：）', f);
     }
@@ -99,7 +100,7 @@ function get_port_strategy(id){
 
 function update_strategy(id){
     var url = '/url?id='+id
-    $.post('/strategy/' + id + '/edit', {
+    $.post('/strategy/edit?id=' + id, {
       "url": $('#url').val(),
       "enable": $('#enable').val(),
       "expect_code": $('#expect_code').val(),
@@ -120,7 +121,7 @@ function update_strategy(id){
 function update_port_strategy(id){
     //var url = '/url?id='+id
     var url = '/tcp_port_scan'
-    $.post('/port_strategy/' + id + '/edit', {
+    $.post('/port_strategy/edit?id=' + id, {
         "host": $('#host').val(),
         "enable": $('#enable').val(),
         "port": $('#port').val(),
