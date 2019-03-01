@@ -58,10 +58,7 @@ func PushPort2Falcon(itemCheckedArray []*g.CheckPortResult, hostname string) {
 		data = getPortMetric(itemChecked, "port_resp_time", tags, int64(itemChecked.RespTime))
 		pushDatas = append(pushDatas, data)
 	}
-
-	for _, d := range pushDatas {
-		fmt.Println(d)
-	}
+	
 	SendMetrics(pushDatas)
 }
 
