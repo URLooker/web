@@ -1,0 +1,217 @@
+{
+	"ImportPath": "github.com/peng19940915/urlooker/web",
+	"GoVersion": "go1.10",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v1.0.0-26-g390728d",
+			"Rev": "390728d3c6ab037195ad3ac12daaa0304b0e681a"
+		},
+		{
+			"ImportPath": "github.com/gin-contrib/sse",
+			"Rev": "5545eab6dad3bbbd6c5ae9186383c2a9d23c0dae"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin",
+			"Comment": "v1.3.0-118-gccb105d",
+			"Rev": "ccb105dbcb48cbcec988df8a46e90af3adf7c0ff"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/binding",
+			"Comment": "v1.3.0-118-gccb105d",
+			"Rev": "ccb105dbcb48cbcec988df8a46e90af3adf7c0ff"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/internal/json",
+			"Comment": "v1.3.0-118-gccb105d",
+			"Rev": "ccb105dbcb48cbcec988df8a46e90af3adf7c0ff"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/render",
+			"Comment": "v1.3.0-118-gccb105d",
+			"Rev": "ccb105dbcb48cbcec988df8a46e90af3adf7c0ff"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.4.0-17-g972a708",
+			"Rev": "972a708cf97995463843c08c8585b26997daf0e1"
+		},
+		{
+			"ImportPath": "github.com/go-xorm/builder",
+			"Comment": "v0.3.4",
+			"Rev": "1d658d7596c25394aab557ef5b50ef35bf706384"
+		},
+		{
+			"ImportPath": "github.com/go-xorm/core",
+			"Comment": "v0.6.2",
+			"Rev": "ccc80c1adf1f6172bbc548877f50a1163041a40a"
+		},
+		{
+			"ImportPath": "github.com/go-xorm/xorm",
+			"Comment": "v0.7.1-28-ge410f04",
+			"Rev": "e410f04aaf2db78083222488e35a0cff3b0ca2f1"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Comment": "v1.3.0-2-gb5d812f",
+			"Rev": "b5d812f8a3706043e23a9cd5babf2e5423744d30"
+		},
+		{
+			"ImportPath": "github.com/gorilla/securecookie",
+			"Comment": "v1.1.1-9-ge65cf8c",
+			"Rev": "e65cf8c5df817c89aeb47ecb46064e802e2de943"
+		},
+		{
+			"ImportPath": "github.com/json-iterator/go",
+			"Comment": "1.1.5-19-g5bc9320",
+			"Rev": "5bc93205020f6311d7e4a34f82c5616a18ec35e5"
+		},
+		{
+			"ImportPath": "github.com/konsorten/go-windows-terminal-sequences",
+			"Comment": "v1.0.2",
+			"Rev": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+		},
+		{
+			"ImportPath": "github.com/lestrrat/go-file-rotatelogs",
+			"Rev": "d3151e2a480fdcd05fb97102f5310a47d96274c4"
+		},
+		{
+			"ImportPath": "github.com/lestrrat/go-strftime",
+			"Rev": "ba3bf9c1d0421aa146564a632931730344f1f9f1"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.6",
+			"Rev": "369ecd8cea9851e459abb67eb171853e3986591e"
+		},
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Comment": "v1.1.4-5-g092d7745",
+			"Rev": "092d7745b47c1a19a6533514ff7a05387b5c5bf9"
+		},
+		{
+			"ImportPath": "github.com/mmitton/ldap",
+			"Rev": "2890b18948f26e61b62dc6878d0c14a708f0d57e"
+		},
+		{
+			"ImportPath": "github.com/modern-go/concurrent",
+			"Comment": "1.0.3",
+			"Rev": "bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94"
+		},
+		{
+			"ImportPath": "github.com/modern-go/reflect2",
+			"Comment": "v1.0.1",
+			"Rev": "94122c33edd36123c84d5368cfb2b69df93a0ec8"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.1-24-g27936f6",
+			"Rev": "27936f6d90f9c8e1145f11ed52ffffbfdb9e0af7"
+		},
+		{
+			"ImportPath": "github.com/rifflock/lfshook",
+			"Comment": "v2.4",
+			"Rev": "b9218ef580f59a2e72dad1aa33d660150445d05a"
+		},
+		{
+			"ImportPath": "github.com/sirupsen/logrus",
+			"Comment": "v1.3.0-18-gfa3c1df",
+			"Rev": "fa3c1df5136d05b1b54b72794cf89579f2b39f7b"
+		},
+		{
+			"ImportPath": "github.com/toolkits/container/list",
+			"Rev": "ba7d73adeaca8dc16c676dedbbb48cc46d3eccb0"
+		},
+		{
+			"ImportPath": "github.com/toolkits/core",
+			"Rev": "0ebf14900fe2ef12a8a19a0c04711538531d51e3"
+		},
+		{
+			"ImportPath": "github.com/toolkits/file",
+			"Rev": "a5b3c5147e07f934d9f9d00b901a20b2529f1a57"
+		},
+		{
+			"ImportPath": "github.com/toolkits/net",
+			"Rev": "3f39ab6fe3cec98207da42dab32703b498ed92e4"
+		},
+		{
+			"ImportPath": "github.com/toolkits/str",
+			"Rev": "f82e0f0498cb9cb9557057132aa5312fbd3fc811"
+		},
+		{
+			"ImportPath": "github.com/toolkits/web",
+			"Rev": "dc0f03327e1d58851ef88fca6e8008ffb6de806a"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Comment": "v1.1.2-2-ge444a50",
+			"Rev": "e444a5086c436778cf9281a7059a3d58b9e17935"
+		},
+		{
+			"ImportPath": "github.com/unrolled/render",
+			"Comment": "v1.0.0",
+			"Rev": "449f3985007486f7f42ca7f62b4c8b45d6d89cbf"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519",
+			"Rev": "8dd112bcdc25174059e45e07517d9fc663123347"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"Rev": "8dd112bcdc25174059e45e07517d9fc663123347"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "8dd112bcdc25174059e45e07517d9fc663123347"
+		},
+		{
+			"ImportPath": "golang.org/x/net/bpf",
+			"Rev": "92fc7df08ae7536330f5a21328292abfa70520a8"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/iana",
+			"Rev": "92fc7df08ae7536330f5a21328292abfa70520a8"
+		},
+		{
+			"ImportPath": "golang.org/x/net/internal/socket",
+			"Rev": "92fc7df08ae7536330f5a21328292abfa70520a8"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv4",
+			"Rev": "92fc7df08ae7536330f5a21328292abfa70520a8"
+		},
+		{
+			"ImportPath": "golang.org/x/net/ipv6",
+			"Rev": "92fc7df08ae7536330f5a21328292abfa70520a8"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "a34e9553db1e492c9a76e60db2296ae7e5fbb772"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/windows",
+			"Rev": "a34e9553db1e492c9a76e60db2296ae7e5fbb772"
+		},
+		{
+			"ImportPath": "gopkg.in/asn1-ber.v1",
+			"Comment": "v1.3",
+			"Rev": "f715ec2f112d1e4195b827ad68cf44017a3ef2b1"
+		},
+		{
+			"ImportPath": "gopkg.in/go-playground/validator.v8",
+			"Comment": "v8.18.2",
+			"Rev": "5f1438d3fca68893a817e4a66806cea46a9e4ebf"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Comment": "v2.2.2",
+			"Rev": "51d6538a90f86fe93ac480b35f37b2be17fef232"
+		},
+		{
+			"ImportPath": "stathat.com/c/consistent",
+			"Comment": "v1.0.0",
+			"Rev": "ad91dc4a3a642859730ff3d65929fce009bfdc23"
+		}
+	]
+}

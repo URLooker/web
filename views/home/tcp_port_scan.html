@@ -1,0 +1,100 @@
+{{define "home/tcp_port_scan"}}
+<!DOCTYPE html>
+<html>
+<head>
+{{ template "inc/head" . }}
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+</head>
+<body>
+{{ template "inc/nav" . }}
+<div class="all">
+    <!-- search -->
+    <div class="form-inline mb20" role="form">
+        <div class="form-group">
+            <input type="text" class="form-control" id="query" value="{{$.Query}}">
+        </div>
+        <button onclick="query_item()" class="btn btn-default">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+        <input type="checkbox" name="mine" id="mine" {{if eq $.Mine 1}} checked="checked"{{end}}>
+        <span>只看自己</span>
+        <a href="/port_strategy/add" class="btn btn-default pull-right">
+            <span class="glyphicon glyphicon-plus"></span>
+            添加TCP端口连通性监控
+        </a>
+    </div>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Host</th>
+            <th>IP</th>
+            <th>Port</th>
+            <th>超时时间</th>
+            <th>Creator</th>
+            <th>接收组</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Strategies}}
+        <tr>
+            <td id="item_id">
+            {{.Id}}
+            </td>
+            <td id="item_target">{{.Host}}</td>
+            <td id="ip">{{ .IP }}</td>
+            <td id="port">{{.Port}}</td>
+            <td id="timeout">{{.Timeout}}</td>
+            <td id="creator">{{.Creator}}</td>
+            <td id="team_name">
+            {{ range (TeamsOfStrategy .Teams)}}
+                <code class="users green">{{.Name}}</code>
+            {{end}}
+
+            </td>
+            <td id="note">{{.Note}}</td>
+            <td id="edit">
+                <a class="edit-icon" data-toggle="tooltip" data-placement="top" title="查看" href="/port?id={{.Id}}">
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </a>
+                <span class="cut-line"></span>
+                <a class="edit-icon" data-toggle="tooltip" data-placement="top" title="修改" href="/port_strategy/edit?id={{.Id}}">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </a>
+                <span class="cut-line"></span>
+                <a class="edit-icon" data-toggle="tooltip" data-placement="top" title="删除" href="javascript:del_port_strategy('{{.Id}}');">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+{{ template "inc/pager" . }}
+</div>
+
+<script type="text/javascript">
+    function query_item() {
+        var query = $.trim($("#query").val());
+        var mine = document.getElementById('mine').checked ? 1 : 0;
+        window.location.href="/?q="+query+"&mine=" + mine;
+    }
+
+
+    $(function() {
+        $("#query").keypress(function(e) {
+            var key = e.which;
+            if (key == 13) {
+                query_item();
+            }
+        });
+        $("#mine").click(query_item);
+    });
+</script>
+{{ template "inc/footer" . }}
+</body>
+</html>
+{{end}}

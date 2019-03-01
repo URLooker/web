@@ -1,0 +1,65 @@
+{
+    "log":{
+        "logLevel": "debug",
+        "logPath": "logs",
+        "fileName": "alarm.log",
+        "maxAge": 7,
+        "rotationTime": 1
+    },
+    "admins":["ning","admin"],
+    "salt": "have fun!",
+    "past": 30,
+    "http": {
+        "listen": "0.0.0.0:1984",
+        "secret": "secret"
+    },
+    "rpc": {
+        "listen": "0.0.0.0:1985"
+    },
+    "mysql": {
+        "addr": "root:test456@tcp(10.201.82.28:3306)/urlooker?charset=utf8&&loc=Asia%2FShanghai",
+        "idle": 10,
+        "max": 20
+    },
+    "ldap": {
+        "enabled": false,
+        "addr": "ldap.example.com:389",
+        "baseDN": "dc=example,dc=com",
+        "bindDN": "cn=mananger,dc=example,dc=com",
+        "bindPasswd": "12345678",
+        "userField": "uid",
+        "attributes": ["sn","mail","telephoneNumber"]
+    },
+    "alarm":{
+        "enable": true,
+        "batch": 200,
+        "replicas": 500,
+        "connTimeout": 1000,
+        "callTimeout": 5000,
+        "maxConns": 32,
+        "maxIdle": 32,
+        "sleepTime":30,
+        "cluster":{
+            "node-1":"127.0.0.1:1986"
+        }
+    },
+    "monitorMap": {
+        "default":["hostname.1"],
+        "idc1":["hostname.2"]
+    },
+    "falcon":{
+        "enable": true,
+        "addrs": [
+            "10.203.40.143:8433",
+            "10.200.200.71:8433",
+            "10.201.81.120:8433",
+            "10.202.80.139:8433"
+        ],
+        "timeout": 3000,
+        "interval": 60
+    },
+    "internalDns":{
+        "enable": false,
+        "addr":""
+    }
+}

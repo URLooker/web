@@ -1,0 +1,117 @@
+{{define "strategy/port_create"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ template "inc/select2" .}}
+    <link rel="stylesheet" type="text/css" href="/css/strategy.css">
+</head>
+<body>
+    {{ template "inc/nav" .}}
+<div class='container middle_vertical' style="margin-top: 100px">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+        <div role="form" class="form-horizontal">
+
+            <div class="form-group">
+                <label class="control-label" for="TargetNeedToMonitor">主机名(必填)</label>
+                <input class="form-control" type="text" placeholder="主机名" id="host">
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">是否启用</label>
+                <select id="enable">
+                    <option value="1">启用</option>
+                    <option value="0">禁用</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">IP地址</label>
+                <input class="form-control" type="text" placeholder="输入ip地址" id="ip">
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">端口号</label>
+                <input class="form-control" type="text" placeholder="端口号" id="port">
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">Timeout（秒）</label>
+                <input class="form-control" type="timeout" placeholder="单位：秒,默认6s" id="timeout">
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">备注(选填)</label>
+                <input class="form-control" type="text" placeholder="备注" id="note">
+            </div>
+
+            <div class="form-group" style="">
+                <label for="TargetNeedToMonitor">告警设置</label>
+                <table>
+                    <thead>
+                    <tr>
+                        <th><div style="width:50px">连续</div></th>
+                        <th><input class="form-control" type="text" style="width:40px;margin-right:10px" value="3" id="times"></th>
+                        <th><div style="width:105px;">次异常,&nbsp;&nbsp发送到</div></th>
+                        <th><input class="form-control" type="text" style="width:150px;margin-right:10px" id="teams"></input></th>
+                        <th><div style="width:80px;">发送次数</div></th>
+                        <th><input class="form-control" type="text" style="width:100px" id="max_step"></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="form-group">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse1">高级选项</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="form-group">
+                    <label for="TargetNeedToMonitor">关键字(选填)</label>
+                </div>
+                <div >
+                    <input class="form-control" type="text" placeholder="用于检索是否异常" id="keywords">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">tags</label>
+                <textarea type="text" class="form-control" id="tags" value="" placeholder="向falcon推送数据时候使用，形式为 a=b 每行一个"/></textarea>
+            </div>
+            <div>
+                <button class="btn btn-default btn-lg btn-primary" id="submit" onclick="add_port_strategy()">提交</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#teams").select2({
+            placeholder: "报警接收组",
+            allowClear: true,
+            multiple: true,
+            quietMillis: 100,
+            minimumInputLength: 1,
+            id: function(obj){return obj.id;},
+            ajax: {
+                url: "/teams/query",
+                dataType: "json",
+                data: function (term, page) {
+                    return {
+                        query: term,
+                        limit: 20
+                    };
+                },
+                results: function (json, page) {
+                    return {results: json.data.teams};
+                }
+            },
+            formatResult: function (obj) {return obj.name},
+            formatSelection: function(obj) {return obj.name}
+        });
+    });
+</script>
+</body>
+</html>
+{{end}}
