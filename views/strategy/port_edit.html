@@ -1,0 +1,133 @@
+{{define "strategy/port_edit"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ template  "inc/select2" . }}
+    <link rel="stylesheet" type="text/css" href="/css/strategy.css">
+</head>
+<script type="text/javascript">
+    window.onload=get_port_strategy({{ .Id }})
+</script>
+<body>
+    {{ template "inc/nav" . }}
+<input type="hidden" id="sid" value="{{ .Id }}">
+<div class="container middle_vertical" style='margin-top:100px'>
+    <div class="col-md-3"></div>
+
+    <div class="col-md-6">
+        <div role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label" for="TargetNeedToMonitor">Host (必填)</label>
+                    <input class="form-control" type="text" placeholder="主机名" id="host">
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">是否启用</label>
+                <select id="enable">
+                    <option value ="1">启用</option>
+                    <option value ="0">禁用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">IP</label>
+                <input class="form-control" type="text" placeholder="ip地址" id="ip">
+            </div>
+            <div class="form-group">
+                <label for="TargetNeedMonitor">端口</label>
+                <input class='form-control' type='text' placeholder='TCP端口号' id='port' value=""/>
+            </div>
+
+            <div class="form-group">
+                <label for="TargetNeedToMonitor">Timeout (毫秒)</label>
+                <input class="form-control" type="timeout" placeholder="单位：毫秒" id="timeout">
+            </div>
+
+            <div class="form-group">
+                <lable for="TargetNeedToMonitor">备注（选填）</lable>
+                <input class="form-control" type="text" placeholder="备注信息" id="note">
+            </div>
+
+            <div class="form-group" style="">
+                <label for="TargetNeedToMonitor"> 告警设置</label>
+                <table>
+                    <thead>
+                    <tr>
+                        <th><div style="width:50px;">连续</div></th>
+                        <th><input class='form-control' type="text" style="width:40px;margin-right:10px" value=""  id='times'></th>
+                        <th><div style="width:105px;">次异常,&nbsp;&nbsp;发送到</div></th>
+                        <th><input class='form-control' type="text" style="width:220px;margin-right:10px" id='teams'></th>
+                        <th><div style="width:64px;">发送次数</div></th>
+                        <th><input class='form-control' type="text" style="width:40px" id='max_step'></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse1">高级选项</a>
+                </h4>
+            </div>
+
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="form-group">
+                    <label for="TargetNeedToMonitor">关键字（选填）</label>
+                    <input class='form-control' type='text' placeholder='用于检索是否异常' id='keywords'></input>
+                </div>
+
+                <div class='form-group'>
+                    <label for='TargetNeedToMonitor'>tags</label>
+                    <textarea type="text" class="form-control " id='tags' value="" placeholder="向falcon推送数据时使用, 形式为 a=b 每行一个"/></textarea>
+                </div>
+
+            </div>
+
+            <div class='container' style="margin-top:10px">
+                <button class='btn btn-defaultr btn-lg btn-primary' id='submit'>提交</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#teams").select2({
+            placeholder: "报警接收组",
+            allowClear: true,
+            multiple: true,
+            quietMillis: 100,
+            minimumInputLength:0 ,
+            id: function(obj) {return obj.id},
+            initSelection: function(element, callback) {
+                $.getJSON("/port_strategy/teams?id={{ .Id }}",function(json){
+                    callback(json.data.teams);
+                });
+            },
+            ajax: {
+                url: "/teams/query",
+                dataType: "json",
+                data: function(term, page) {
+                    return {
+                        query: term,
+                        limit: 20
+                    };
+                },
+                results: function(json, page) {
+                    return {results: json.data.teams}
+                }
+            },
+            formatResult: function (obj) {
+                return obj.name
+            },
+            formatSelection: function (obj) {
+                return obj.name
+            }
+        }).select2('val', []);
+    });
+    $("#submit").click(function () {
+        update_port_strategy({{ .Id }})
+    });
+</script>
+</body>
+</html>
+{{end}}

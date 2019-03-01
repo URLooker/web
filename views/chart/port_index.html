@@ -1,0 +1,79 @@
+{{ define "chart/port_index"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{{ template "inc/head" . }}
+    <script src="/lib/echarts/echarts.min.js"></script>
+</head>
+{{ template "inc/port_nav_chart" . }}
+
+<body>
+    <div id="main"></div>
+{{ if .AlarmOn }}
+<div id="event"></div>
+<div id="alarm_title"> 告警历史 </div>
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Status</th>
+        <th>上报值</th>
+        <th>Host</th>
+        <th>IP</th>
+        <th>Port</th>
+        <th>响应时间(ms)</th>
+        <th>时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .Events}}
+            <tr>
+                <td width="10%">{{ .Status }}</td>
+                <td width="5%">{{ .Result }}</td>
+                <td id="item_target" width="35%" style="word-wrap:break-word;word-break:break-all;">{{ .Host }}</td>
+                <td width="10%">{{ .Ip }}</td>
+                <td width="5%">{{ .Port }}</td>
+                <td width="10%">{{ .RespTime }}</td>
+                <td width="20%">{{HumenTime .EventTime}}</td>
+            </tr>
+    {{ end }}
+    </tbody>
+</table>
+<div >
+
+</div>
+{{ end }}
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById("main"));
+    var timeData = [{{ range .TimeData }} {{ . }}, {{end}}];
+    var option = {
+        title: {
+            text: ""
+        },
+        tooltips: {
+            trigger: "axis"
+        },
+        legend: {
+            data: [ ]
+        },
+        xAxis: {
+            type: "category",
+            data: timeData
+        },
+        yAxis: {},
+        series: [
+            {
+                name: "{{ .IP }}",
+                type: 'line',
+                symbolSize: 8,
+                hoverAnimation: false,
+                data: [{{range .Data}} {{ .RespTime }}, {{end}}]
+            },
+        ]
+    };
+    myChart.setOption(option)
+
+</script>
+{{ template "inc/footer" . }}
+</body>
+</html>
+{{end}}
