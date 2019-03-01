@@ -9,24 +9,25 @@ import (
 	"github.com/toolkits/str"
 	"github.com/toolkits/web"
 
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/param"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/param"
+	"github.com/peng19940915/urlooker/web/http/render"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/gin-gonic/gin"
 )
 
-func TeamsPage(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func TeamsPage(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 
-	query := param.String(r, "q", "")
+	query := param.String(c.Request, "q", "")
 	if str.HasDangerousCharacters(query) {
 		errors.Panic("查询字符不合法")
 	}
-	limit := param.Int(r, "limit", 10)
+	limit := param.Int(c.Request, "limit", 10)
 
 	total, err := model.TeamCountOfUser(query, me.Id)
 	errors.MaybePanic(err)
-	pager := web.NewPaginator(r, limit, total)
+	pager := web.NewPaginator(c.Request, limit, total)
 	teams, err := model.TeamsOfUser(query, me.Id, limit, pager.Offset())
 	errors.MaybePanic(err)
 	for _, team := range teams {
@@ -35,53 +36,54 @@ func TeamsPage(w http.ResponseWriter, r *http.Request) {
 			team.CreatorName = user.Name
 		}
 	}
-
-	render.Put(r, "Teams", teams)
-	render.Put(r, "Query", query)
-	render.Put(r, "Pager", pager)
-	render.Put(r, "Me", me)
-	render.Put(r, "Title", "Team")
-	render.HTML(r, w, "team/index")
+	render.HTML(http.StatusOK, c, "team/index", gin.H{
+		"Teams": teams,
+		"Query": query,
+		"Pager": pager,
+		"Me": me,
+		"Title": "Team",
+	})
 }
 
-func TeamsJson(w http.ResponseWriter, r *http.Request) {
-	MeRequired(LoginRequired(w, r))
+func TeamsJson(c *gin.Context) {
+	MeRequired(LoginRequired(c))
 
-	query := param.String(r, "query", "")
-	limit := param.Int(r, "limit", 10)
+	query := param.String(c.Request, "query", "")
+	limit := param.Int(c.Request, "limit", 10)
 
 	if str.HasDangerousCharacters(query) {
-		render.Data(w, fmt.Errorf("query invalid"))
+		render.Data(c, fmt.Errorf("query invalid"))
 		return
 	}
 
 	teams, err := model.QueryTeams(query, limit)
 	errors.MaybePanic(err)
 
-	render.Data(w, map[string]interface{}{"teams": teams})
+	render.Data(c, map[string]interface{}{"teams": teams})
 }
 
-func CreateTeamGet(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func CreateTeamGet(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 
-	render.Put(r, "Me", me)
-	render.Put(r, "Title", "Team")
-	render.HTML(r, w, "team/create")
+	c.HTML(http.StatusOK, "team/create", gin.H{
+		"Me": me,
+		"Title": "Team",
+	})
 }
 
-func CreateTeamPost(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func CreateTeamPost(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 
-	name := param.MustString(r, "name")
+	name := param.MustString(c.Request, "name")
 	if str.HasDangerousCharacters(name) {
 		errors.Panic("team名称不合法")
 	}
-	resume := param.String(r, "resume", "")
+	resume := param.String(c.Request, "resume", "")
 	if str.HasDangerousCharacters(resume) {
 		errors.Panic("resume不合法")
 	}
 
-	uidsStr := param.String(r, "users", "")
+	uidsStr := param.String(c.Request, "users", "")
 	if str.HasDangerousCharacters(uidsStr) {
 		errors.Panic("users不合法")
 	}
@@ -106,12 +108,12 @@ func CreateTeamPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := model.AddTeam(name, resume, me.Id, uids)
-	render.MaybeError(w, err)
+	render.MaybeError(c, err)
 }
 
-func UpdateTeamGet(w http.ResponseWriter, r *http.Request) {
-	team := TeamRequired(r)
-	me := MeRequired(LoginRequired(w, r))
+func UpdateTeamGet(c *gin.Context) {
+	team := TeamRequired(c)
+	me := MeRequired(LoginRequired(c))
 	if !IsAdmin(me.Name) {
 		UserMustBeMemberOfTeam(me.Id, team.Id)
 	}
@@ -122,26 +124,26 @@ func UpdateTeamGet(w http.ResponseWriter, r *http.Request) {
 	for _, user := range users {
 		uids = append(uids, strconv.FormatInt(user.Id, 10))
 	}
-
-	render.Put(r, "Team", team)
-	render.Put(r, "Uids", strings.Join(uids, ","))
-	render.Put(r, "Me", me)
-	render.Put(r, "Title", "Team")
-	render.HTML(r, w, "team/edit")
+	render.HTML(http.StatusOK, c,"team/edit",gin.H{
+		"Team": team,
+		"Uids": strings.Join(uids, ","),
+		"Me": me,
+		"Title": "Team",
+	})
 }
 
-func UpdateTeamPost(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
-	team := TeamRequired(r)
+func UpdateTeamPost(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
+	team := TeamRequired(c)
 	if !IsAdmin(me.Name) {
 		UserMustBeMemberOfTeam(me.Id, team.Id)
 	}
 
-	team.Resume = param.String(r, "resume", "")
+	team.Resume = param.String(c.Request, "resume", "")
 	if str.HasDangerousCharacters(team.Resume) {
 		errors.Panic("resume不合法")
 	}
-	uidsStr := param.String(r, "users", "")
+	uidsStr := param.String(c.Request, "users", "")
 	if str.HasDangerousCharacters(uidsStr) {
 		errors.Panic("users不合法")
 	}
@@ -156,14 +158,14 @@ func UpdateTeamPost(w http.ResponseWriter, r *http.Request) {
 		uids = append(uids, uid)
 	}
 
-	render.Data(w, team.Update(uids))
+	render.Data(c, team.Update(uids))
 }
 
-func GetUsersOfTeam(w http.ResponseWriter, r *http.Request) {
-	MeRequired(LoginRequired(w, r))
-	team := TeamRequired(r)
+func GetUsersOfTeam(c *gin.Context) {
+	MeRequired(LoginRequired(c))
+	team := TeamRequired(c)
 
 	users, err := model.UsersOfTeam(team.Id)
 	errors.MaybePanic(err)
-	render.Data(w, users)
+	render.Data(c, users)
 }

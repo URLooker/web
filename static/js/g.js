@@ -50,15 +50,23 @@ function htmlEncode(value){
 
 function del_strategy(item_id){
     my_confirm("确定删除此策略？", [ '确定', '取消' ], function() {
-        $.post('/strategy/'+item_id+'/delete', {}, function(json) {
+        $.post('/strategy/delete?id='+item_id, {}, function(json) {
             handle_json(json, function (){location.reload()})
         });
     });
 }
 
-function get_strategy(id){
+function del_port_strategy(item_id){
+    my_confirm("确定删除此策略？", [ '确定', '取消' ], function() {
+        $.post('/port_strategy/delete?id='+item_id, {}, function(json) {
+            handle_json(json, function (){location.reload()})
+        });
+    });
+}
 
-  url = "/strategy/" + id
+
+function get_strategy(id){
+  url = "/strategy?id=" + id
   $.post(url, {}, function(res){
     $("#url").val(res.data.url)
     $("#expect_code").val(res.data.expect_code)
@@ -72,6 +80,22 @@ function get_strategy(id){
     $("#tags").val(res.data.tag.replace(/,/g,"\n"))
   }, "json");
 };
+
+function get_port_strategy(id){
+    url = "/port_strategy?id=" + id
+    $.post(url, {}, function(res){
+        $("#host").val(res.data.host)
+        $("#port").val(res.data.port)
+        $("#timeout").val(res.data.timeout)
+        $("#ip").val(res.data.ip)
+        $("#keywords").val(res.data.keywords)
+        $("#note").val(res.data.note)
+        $("#times").val(res.data.times)
+        $("#max_step").val(res.data.max_step)
+        $("#tags").val(res.data.tag.replace(/,/g,"\n"))
+    }, "json");
+};
+
 
 function update_strategy(id){
     var url = '/url?id='+id
@@ -93,6 +117,27 @@ function update_strategy(id){
     });
 }
 
+function update_port_strategy(id){
+    //var url = '/url?id='+id
+    var url = '/tcp_port_scan'
+    $.post('/port_strategy/' + id + '/edit', {
+        "host": $('#host').val(),
+        "enable": $('#enable').val(),
+        "port": $('#port').val(),
+        "timeout": $('#timeout').val(),
+        "times": $('#times').val(),
+        "teams": $('#teams').val(),
+        "max_step": $('#max_step').val(),
+        "tags": $('#tags').val(),
+        "note": $('#note').val(),
+        "keywords": $('#keywords').val(),
+        "data": $('#data').val(),
+        "ip": $('#ip').val()
+    }, function(json) {
+        handle_json(json, function(){location.href=url})
+    });
+}
+
 function add_strategy() {
     $.post("/strategy/add", {
       "url": $('#url').val(),
@@ -110,6 +155,26 @@ function add_strategy() {
     }, function(json){
         handle_json(json, function(){
           location.href="/";
+        });
+    });
+}
+
+function add_port_strategy() {
+    $.post("/port_strategy/add", {
+        "host": $("#host").val(),
+        "enable": $("#enable").val(),
+        "ip": $("#ip").val(),
+        "port": $("#port").val(),
+        "timeout": $('#timeout').val(),
+        "times": $('#times').val(),
+        "teams": $('#teams').val(),
+        "max_step": $('#max_step').val(),
+        "tags": $('#tags').val(),
+        "note": $('#note').val(),
+        "keywords": $('#keywords').val()
+    }, function(json){
+        handle_json(json, function(){
+            location.href="/tcp_port_scan";
         });
     });
 }

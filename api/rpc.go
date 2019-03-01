@@ -1,12 +1,12 @@
 package api
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net"
 	"net/rpc"
 	"net/rpc/jsonrpc"
 
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/g"
 )
 
 type Web int
@@ -21,13 +21,13 @@ func Start() {
 	if e != nil {
 		log.Fatalln("listen occur error", e)
 	} else {
-		log.Println("listening on", addr)
+		log.Info("listening on", addr)
 	}
 
 	for {
 		conn, err := l.Accept()
 		if err != nil {
-			log.Println("listener accept occur error", err)
+			log.Errorf("listener accept occur error, detail", err.Error())
 			continue
 		}
 		go server.ServeCodec(jsonrpc.NewServerCodec(conn))

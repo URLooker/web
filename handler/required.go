@@ -1,44 +1,65 @@
 package handler
 
 import (
-	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/toolkits/str"
 
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/http/cookie"
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/http/cookie"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/gin-gonic/gin"
 )
 
-func StraRequired(r *http.Request) *model.Strategy {
-	vars := mux.Vars(r)
-	id, err := strconv.ParseInt(vars["id"], 10, 64)
-	errors.MaybePanic(err)
-
-	obj, err := model.GetStrategyById(id)
-	errors.MaybePanic(err)
-	if obj == nil {
-		panic(errors.BadRequestError("no such item"))
+func StraRequired(c *gin.Context) *model.Strategy {
+	idTmp := c.Query("id")
+	if idTmp != "" {
+		id, err := strconv.ParseInt(idTmp, 10, 64)
+		errors.MaybePanic(err)
+		obj, err := model.GetStrategyById(id)
+		errors.MaybePanic(err)
+		if obj == nil {
+			panic(errors.BadRequestError("no such item"))
+		}
+		return obj
+	}else {
+		panic(errors.BadRequestError("plz make sure strategy is right."))
 	}
-	return obj
 }
 
-func HostnameRequired(r *http.Request) string {
-	vars := mux.Vars(r)
-	hostname := vars["hostname"]
+func PortStraRequired(c *gin.Context) *model.PortStrategy {
+	idTmp := c.Query("id")
 
-	if str.HasDangerousCharacters(hostname) {
-		errors.Panic("hostname不合法")
+	if idTmp != "" {
+		id, err := strconv.ParseInt(idTmp, 10, 64)
+		errors.MaybePanic(err)
+		obj, err := model.GetPortStrategyById(id)
+		errors.MaybePanic(err)
+		if obj == nil {
+			panic(errors.BadRequestError("no such item"))
+		}
+		return obj
+	}else {
+		panic(errors.BadRequestError("plz make sure strategy is right."))
 	}
-
-	return hostname
 }
 
-func LoginRequired(w http.ResponseWriter, r *http.Request) (int64, string) {
-	userid, username, found := cookie.ReadUser(r)
+func HostnameRequired(c *gin.Context) string {
+	hostname := c.Query("hostname")
+
+	if hostname != "" {
+		if str.HasDangerousCharacters(hostname) {
+			errors.Panic("hostname不合法")
+		}
+		return hostname
+	}else {
+		panic(errors.BadRequestError("hostname is null"))
+	}
+}
+
+func LoginRequired(c *gin.Context) (int64, string) {
+	userid, username, found := cookie.ReadUser(c)
 	if !found {
 		panic(errors.NotLoginError())
 	}
@@ -79,9 +100,12 @@ func MeRequired(id int64, name string) *model.User {
 	return user
 }
 
-func TeamRequired(r *http.Request) *model.Team {
-	vars := mux.Vars(r)
-	tid, err := strconv.ParseInt(vars["tid"], 10, 64)
+func TeamRequired(c *gin.Context) *model.Team {
+	tidTmp := c.Query("tid")
+	if tidTmp == "" {
+		panic(errors.BadRequestError("tid is null"))
+	}
+	tid, err := strconv.ParseInt(tidTmp, 10, 64)
 	errors.MaybePanic(err)
 
 	team, err := model.GetTeamById(tid)

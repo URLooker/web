@@ -1,3 +1,4 @@
+{{define "inc/pager"}}
 {{if gt .Pager.PageNums 1}}
 <ul class="pagination mt0 mb20">
     {{if .Pager.HasPrev}}
@@ -22,4 +23,5 @@
     class="disabled"><a>尾页</a></li>
     {{end}}
 </ul>
+{{end}}
 {{end}}

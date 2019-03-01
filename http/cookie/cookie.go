@@ -1,10 +1,10 @@
 package cookie
 
 import (
-	"net/http"
-
 	"github.com/gorilla/securecookie"
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 var SecureCookie *securecookie.SecureCookie
@@ -15,10 +15,11 @@ func Init() {
 	SecureCookie = securecookie.New(hashKey, blockKey)
 }
 
-func ReadUser(r *http.Request) (id int64, name string, found bool) {
-	if cookie, err := r.Cookie("u"); err == nil {
+func ReadUser(c *gin.Context) (id int64, name string, found bool) {
+
+	if cookieValue, err := c.Cookie("u"); err == nil {
 		value := make(map[string]interface{})
-		if err = SecureCookie.Decode("u", cookie.Value, &value); err == nil {
+		if err = SecureCookie.Decode("u", cookieValue, &value); err == nil {
 			id = value["id"].(int64)
 			name = value["name"].(string)
 			if id == 0 || name == "" {
@@ -28,11 +29,13 @@ func ReadUser(r *http.Request) (id int64, name string, found bool) {
 				return
 			}
 		}
+	}else {
+		fmt.Println("Not Find User Info From Cookie")
 	}
 	return
 }
 
-func WriteUser(w http.ResponseWriter, id int64, name string) error {
+func WriteUser(c *gin.Context, id int64, name string) error {
 	value := make(map[string]interface{})
 	value["id"] = id
 	value["name"] = name
@@ -41,19 +44,12 @@ func WriteUser(w http.ResponseWriter, id int64, name string) error {
 		return err
 	}
 
-	cookie := &http.Cookie{
-		Name:     "u",
-		Value:    encoded,
-		Path:     "/",
-		MaxAge:   3600 * 24 * 7,
-		HttpOnly: true,
-	}
-	http.SetCookie(w, cookie)
+	c.SetCookie("u", encoded, 3600 * 24 * 7, "/","", false, true)
 
 	return nil
 }
 
-func RemoveUser(w http.ResponseWriter) error {
+func RemoveUser(c *gin.Context) error {
 	value := make(map[string]interface{})
 	value["id"] = ""
 	value["name"] = ""
@@ -61,14 +57,7 @@ func RemoveUser(w http.ResponseWriter) error {
 	if err != nil {
 		return err
 	}
-
-	cookie := &http.Cookie{
-		Name:   "u",
-		Value:  encoded,
-		Path:   "/",
-		MaxAge: -1,
-	}
-	http.SetCookie(w, cookie)
+	c.SetCookie("u", encoded, -1, "/","", false, true)
 
 	return nil
 }

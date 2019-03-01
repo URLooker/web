@@ -3,23 +3,23 @@ package handler
 import (
 	"net/http"
 
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/utils"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/render"
+	"github.com/peng19940915/urlooker/web/utils"
+	"github.com/gin-gonic/gin"
 )
 
-func GetLog(w http.ResponseWriter, r *http.Request) {
+func GetLog(c *gin.Context) {
 
-	AdminRequired(LoginRequired(w, r))
+	AdminRequired(LoginRequired(c))
 	appLog, err := utils.ReadLastLine("var/app.log")
 	errors.MaybePanic(err)
-
-	render.Put(r, "Log", appLog)
-
-	render.HTML(r, w, "status/log")
+	render.HTML(http.StatusOK, c,"status/log", gin.H{
+		"Log": appLog,
+	})
 }
 
-func Version(w http.ResponseWriter, r *http.Request) {
-	render.Data(w, g.VERSION)
+func Version(c *gin.Context) {
+	render.Data(c, g.VERSION)
 }

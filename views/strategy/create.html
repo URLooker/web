@@ -1,3 +1,4 @@
+{{define "strategy/create"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +29,7 @@
       </div>
       <div class='form-group'>
         <label for='TargetNeedToMonitor'>期望返回状态码</label>
-        <div class='controls'>
+        <div>
           <input class='form-control' type='text' placeholder='默认为 200' id='expect_code'/>
         </div>
       </div>
@@ -128,6 +129,6 @@ $(function() {
 </script>
 </body>
 </html>
-
+{{end}}
 
     

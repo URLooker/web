@@ -7,18 +7,23 @@ import (
 	"sync"
 
 	"github.com/toolkits/file"
+	"time"
 )
 
-type LogConfig struct {
-	Path     string `json:"path"`
-	Filename string `json:"filename"`
-	Level    string `json:"level"`
-}
+
 
 type MysqlConfig struct {
 	Addr string `json:"addr"`
 	Idle int    `json:"idle"`
 	Max  int    `json:"max"`
+}
+
+type Log struct {
+	LogLevel     string                  `json:"logLevel"`
+	RotationTime time.Duration           `json:"rotationTime"`
+	LogPath      string                  `json:"logPath"`
+	MaxAge       time.Duration           `json:"maxAge"`
+	FileName     string                  `json:"fileName"`
 }
 
 type HttpConfig struct {
@@ -44,7 +49,8 @@ type AlarmConfig struct {
 
 type FalconConfig struct {
 	Enable   bool   `json:"enable"`
-	Addr     string `json:"addr"`
+	Addrs    []string `json:"addrs"`
+	Timeout  int    `json:"timeout"`
 	Interval int    `json:"interval"`
 }
 
@@ -55,7 +61,7 @@ type LdapConfig struct {
 	BaseDN     string   `json:"baseDN`
 	BindPasswd string   `json:"bindPasswd"`
 	UserField  string   `json:"userField"`
-	Attributes []string `json:attributes`
+	Attributes []string `json:"attributes"`
 }
 
 type InternalDnsConfig struct {
@@ -64,14 +70,13 @@ type InternalDnsConfig struct {
 }
 
 type GlobalConfig struct {
-	Debug       bool                `json:"debug"`
+	Log         *Log                `json:"log"`
 	Admins      []string            `json:"admins"`
 	Salt        string              `json:"salt"`
 	Past        int                 `json:"past"` //查看最近几分钟内的报警历史和绘图，默认为30分钟
 	Http        *HttpConfig         `json:"http"`
 	Rpc         *RpcConfig          `json:"rpc"`
 	Ldap        *LdapConfig         `json:"ldap"`
-	Log         *LogConfig          `json:"log"`
 	Mysql       *MysqlConfig        `json:"mysql"`
 	Alarm       *AlarmConfig        `json:"alarm"`
 	Falcon      *FalconConfig       `json:"falcon"`

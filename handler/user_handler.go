@@ -5,24 +5,24 @@ import (
 	"strings"
 
 	"github.com/toolkits/str"
-	//"github.com/toolkits/web"
 
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/http/cookie"
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/param"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/model"
-	"github.com/urlooker/web/utils"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/http/cookie"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/param"
+	"github.com/peng19940915/urlooker/web/http/render"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/utils"
+	"github.com/gin-gonic/gin"
 )
 
-func Register(w http.ResponseWriter, r *http.Request) {
+func Register(c *gin.Context) {
 	if g.Config.Ldap.Enabled {
 		errors.Panic("注册已关闭")
 	}
-	username := param.MustString(r, "username")
-	password := param.MustString(r, "password")
-	repeat := param.MustString(r, "repeat")
+	username := param.MustString(c.Request, "username")
+	password := param.MustString(c.Request, "password")
+	repeat := param.MustString(c.Request, "repeat")
 
 	if password != repeat {
 		errors.Panic("两次输入的密码不一致")
@@ -35,29 +35,31 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userid, err := model.UserRegister(username, utils.EncryptPassword(password))
 	errors.MaybePanic(err)
 
-	render.Data(w, cookie.WriteUser(w, userid, username))
+	render.Data(c, cookie.WriteUser(c, userid, username))
 }
 
-func RegisterPage(w http.ResponseWriter, r *http.Request) {
-	render.Put(r, "Title", "register")
-	render.Put(r, "callback", param.String(r, "callback", "/"))
-	render.HTML(r, w, "auth/register")
+func RegisterPage(c *gin.Context) {
+	render.HTML(http.StatusOK, c,"auth/register", gin.H{
+		"Title": "register",
+		"callback": param.String(c.Request, "callback", "/"),
+	})
 }
 
-func Logout(w http.ResponseWriter, r *http.Request) {
-	errors.MaybePanic(cookie.RemoveUser(w))
-	http.Redirect(w, r, "/", 302)
+func Logout(c *gin.Context) {
+	errors.MaybePanic(cookie.RemoveUser(c))
+	c.Redirect(http.StatusFound, "/")
 }
 
-func LoginPage(w http.ResponseWriter, r *http.Request) {
-	render.Put(r, "Title", "login")
-	render.Put(r, "callback", param.String(r, "callback", "/"))
-	render.HTML(r, w, "auth/login")
+func LoginPage(c *gin.Context) {
+	render.HTML(http.StatusOK, c,"auth/login", gin.H{
+		"Title": "login",
+		"callback": param.String(c.Request, "callback", "/"),
+	})
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	username := param.MustString(r, "username")
-	password := param.MustString(r, "password")
+func Login(c *gin.Context) {
+	username := param.MustString(c.Request, "username")
+	password := param.MustString(c.Request, "password")
 
 	if str.HasDangerousCharacters(username) {
 		errors.Panic("用户名不合法，请不要使用非法字符")
@@ -126,17 +128,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		errors.MaybePanic(err)
 	}
 
-	render.Data(w, cookie.WriteUser(w, userid, username))
+	render.Data(c, cookie.WriteUser(c, userid, username))
 }
 
-func MeJson(w http.ResponseWriter, r *http.Request) {
-	render.Data(w, MeRequired(LoginRequired(w, r)))
+func MeJson(c *gin.Context) {
+	render.Data(c, MeRequired(LoginRequired(c)))
 }
 
-func UsersJson(w http.ResponseWriter, r *http.Request) {
-	MeRequired(LoginRequired(w, r))
-	query := param.String(r, "query", "")
-	limit := param.Int(r, "limit", 10)
+func UsersJson(c *gin.Context) {
+	MeRequired(LoginRequired(c))
+	query := param.String(c.Request, "query", "")
+	limit := param.Int(c.Request, "limit", 10)
 	if str.HasDangerousCharacters(query) {
 		errors.Panic("query invalid")
 		return
@@ -150,16 +152,16 @@ func UsersJson(w http.ResponseWriter, r *http.Request) {
 	}
 	errors.MaybePanic(err)
 
-	render.Data(w, users)
+	render.Data(c, users)
 }
 
-func UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func UpdateMyProfile(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 
-	cnname := param.String(r, "cnname", "")
-	email := param.String(r, "email", "")
-	phone := param.String(r, "phone", "")
-	wechat := param.String(r, "wechat", "")
+	cnname := param.String(c.Request, "cnname", "")
+	email := param.String(c.Request, "email", "")
+	phone := param.String(c.Request, "phone", "")
+	wechat := param.String(c.Request, "wechat", "")
 
 	if str.HasDangerousCharacters(cnname) {
 		errors.Panic("中文名不合法")
@@ -179,18 +181,18 @@ func UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	me.Phone = phone
 	me.Wechat = wechat
 	errors.MaybePanic(me.UpdateProfile())
-	render.Data(w, "ok")
+	render.Data(c, "ok")
 }
 
-func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
+func ChangeMyPasswd(c *gin.Context) {
 
-	uid, _ := LoginRequired(w, r)
+	uid, _ := LoginRequired(c)
 	me, err := model.GetUserPwById(uid)
 	errors.MaybePanic(err)
 
-	oldPasswd := param.MustString(r, "old_password")
-	newPasswd := param.MustString(r, "new_password")
-	repeat := param.MustString(r, "repeat")
+	oldPasswd := param.MustString(c.Request, "old_password")
+	newPasswd := param.MustString(c.Request, "new_password")
+	repeat := param.MustString(c.Request, "repeat")
 
 	if newPasswd != repeat {
 		errors.Panic("两次输入的密码不一致")
@@ -198,9 +200,9 @@ func ChangeMyPasswd(w http.ResponseWriter, r *http.Request) {
 
 	err = me.ChangePasswd(utils.EncryptPassword(oldPasswd), utils.EncryptPassword(newPasswd))
 	if err == nil {
-		cookie.RemoveUser(w)
+		cookie.RemoveUser(c)
 	}
 
 	errors.MaybePanic(err)
-	render.Data(w, "ok")
+	render.Data(c, "ok")
 }

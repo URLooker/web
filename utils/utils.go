@@ -11,7 +11,8 @@ import (
 
 	"github.com/toolkits/str"
 
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/gin-gonic/gin"
 )
 
 func Getkey(idc string, sid int) string {
@@ -143,4 +144,22 @@ func ReadLastLine(filename string) (string, error) {
 	}
 	//res := strings.Split(string(buffer), "\n")
 	return string(buffer), nil
+}
+
+
+func CORS() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.Writer.Header().Add("Access-Control-Allow-Origin", "*")
+		context.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		context.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE, PATCH,HEAD")
+		context.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Apitoken")
+		context.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
+		context.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if context.Request.Method == "OPTIONS" {
+			context.AbortWithStatus(200)
+		} else {
+			context.Next()
+		}
+	}
 }

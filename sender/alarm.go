@@ -1,16 +1,15 @@
 package sender
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
-
 	"github.com/toolkits/container/list"
 
-	"github.com/urlooker/web/backend"
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/backend"
+	"github.com/peng19940915/urlooker/web/g"
 )
 
-func SendToAlarm(Q *list.SafeListLimited, node string) {
+func SendToAlarm(alarmType string, Q *list.SafeListLimited, node string) {
 	cfg := g.Config
 	batch := cfg.Alarm.Batch
 	addr := cfg.Alarm.Cluster[node]
@@ -29,7 +28,13 @@ func SendToAlarm(Q *list.SafeListLimited, node string) {
 		sendOk := false
 		for i := 0; i < 3; i++ {
 			rpcClient := backend.NewRpcClient(addr)
-			err = rpcClient.Call("Alarm.Send", items, &resp)
+
+			if alarmType == "port"{
+				err = rpcClient.Call("Alarm.SendPort", items, &resp)
+			}else if alarmType == "url" {
+				err = rpcClient.Call("Alarm.Send", items, &resp)
+			}
+
 			if err == nil {
 				sendOk = true
 				break
@@ -40,8 +45,6 @@ func SendToAlarm(Q *list.SafeListLimited, node string) {
 		if !sendOk {
 			log.Printf("send alarm %s:%s fail: %v", node, addr, err)
 		}
-		if cfg.Debug {
-			log.Println("<=", resp)
-		}
+		log.Debug("<=", resp)
 	}
 }

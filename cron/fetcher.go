@@ -1,20 +1,21 @@
 package cron
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"strings"
 	"time"
 
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/model"
-	"github.com/urlooker/web/utils"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/utils"
 )
 
 func GetDetectedItem() {
 	t1 := time.NewTicker(time.Duration(60) * time.Second)
 	for {
-		err := getDetectedItem()
-		if err != nil {
+		err1 := getDetectedItem()
+		err2 := getPortDetectedItem()
+		if err1 != nil || err2  != nil{
 			time.Sleep(time.Second * 1)
 			continue
 		}
@@ -58,14 +59,38 @@ func getDetectedItem() error {
 	}
 
 	for k, v := range detectedItemMap {
-		log.Println(k)
+		log.Info(k)
 		for _, i := range v {
-			log.Println(i)
+			log.Info(i)
 		}
 	}
-
 	g.DetectedItemMap.Set(detectedItemMap)
 	return nil
+}
+
+
+func newDetectedItem(s *model.Strategy, ip string, idc string) g.DetectedItem {
+	detectedItem := g.DetectedItem{
+		Ip:         ip,
+		Idc:        idc,
+		Creator:    s.Creator,
+		Sid:        s.Id,
+		Keywords:   s.Keywords,
+		Data:       s.Data,
+		Tag:        s.Tag,
+		ExpectCode: s.ExpectCode,
+		Timeout:    s.Timeout,
+	}
+	schema, domain, port, path := utils.ParseUrl(s.Url)
+
+	if port == "" {
+		detectedItem.Target = schema + "//" + ip + path
+	} else {
+		detectedItem.Target = schema + "//" + ip + ":" + port + path
+	}
+
+	detectedItem.Domain = domain
+	return detectedItem
 }
 
 func getIpAndIdc(domain string) []g.IpIdc {
@@ -96,27 +121,50 @@ func getIpAndIdc(domain string) []g.IpIdc {
 	return ipIdcArr
 }
 
-func newDetectedItem(s *model.Strategy, ip string, idc string) g.DetectedItem {
-	detectedItem := g.DetectedItem{
+// 获取Port 扫描数据
+func getPortDetectedItem() error {
+	detectedPortItemMap := make(map[string][]*g.DetectedPortItem)
+	stras, err := model.GetAllPortStrategyByCron()
+	if err != nil {
+		log.Errorf("get port strategies error: %v", err)
+		return err
+	}
+	for _, s := range stras {
+
+		idc := utils.InternalHostIdc(s.Host)
+
+		detectedPortItem := newPortDetectedItem(s, s.IP, idc)
+		key := utils.Getkey(idc, int(detectedPortItem.Sid))
+
+		if _, exists := detectedPortItemMap[key]; exists {
+			detectedPortItemMap[key] = append(detectedPortItemMap[key], &detectedPortItem)
+		} else {
+			detectedPortItemMap[key] = []*g.DetectedPortItem{&detectedPortItem}
+		}
+	}
+	for k, v := range detectedPortItemMap {
+		log.Info(k)
+		for _, i := range v {
+			log.Info(i)
+		}
+	}
+
+	g.DetectedPortItemMap.Set(detectedPortItemMap)
+	return nil
+}
+
+func newPortDetectedItem(s *model.PortStrategy, ip string, idc string) g.DetectedPortItem {
+	detectedPortItem := g.DetectedPortItem{
 		Ip:         ip,
 		Idc:        idc,
 		Creator:    s.Creator,
 		Sid:        s.Id,
 		Keywords:   s.Keywords,
-		Data:       s.Data,
+		Host:       s.Host,
 		Tag:        s.Tag,
-		ExpectCode: s.ExpectCode,
+		Port:       s.Port,
 		Timeout:    s.Timeout,
 	}
 
-	schema, domain, port, path := utils.ParseUrl(s.Url)
-	if port == "" {
-		detectedItem.Target = schema + "//" + ip + path
-	} else {
-		detectedItem.Target = schema + "//" + ip + ":" + port + path
-	}
-
-	detectedItem.Domain = domain
-
-	return detectedItem
+	return detectedPortItem
 }

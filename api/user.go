@@ -1,11 +1,11 @@
 package api
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/model"
 )
 
 type UsersResponse struct {
@@ -23,7 +23,7 @@ func (this *Web) GetUsersByTeam(req string, reply *UsersResponse) error {
 	for _, tid := range tids {
 		id, err := strconv.ParseInt(tid, 10, 64)
 		if err != nil {
-			log.Println("tid error:", err)
+			log.Errorf("tid error,detail: %v", err)
 			continue
 		}
 		users, err := model.UsersInfoOfTeam(id)

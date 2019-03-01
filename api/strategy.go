@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/model"
 )
 
 type StrategyResponse struct {
@@ -18,3 +18,19 @@ func (this *Web) GetStrategies(req interface{}, resp *StrategyResponse) error {
 
 	return nil
 }
+
+type PortStrategyResponse struct {
+	Message string
+	Data    []*model.PortStrategy
+}
+
+func (this *Web) GetPortStrategies(req interface{}, resp *PortStrategyResponse) error {
+	strategies, err := model.GetAllPortStrategyByCron()
+	if err != nil {
+		resp.Message = err.Error()
+	}
+	resp.Data = strategies
+
+	return nil
+}
+

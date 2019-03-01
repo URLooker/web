@@ -1,18 +1,17 @@
 package handler
 
 import (
-	"net/http"
-
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/http/render"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/http/render"
+	"github.com/gin-gonic/gin"
 )
 
-func GetHostIpItem(w http.ResponseWriter, r *http.Request) {
-	hostname := HostnameRequired(r)
+func GetHostIpItem(c *gin.Context) {
+	hostname := HostnameRequired(c)
 	ipItem, exists := g.DetectedItemMap.Get(hostname)
 	if !exists {
-		render.Data(w, "")
+		render.Data(c, "")
 		return
 	}
-	render.Data(w, ipItem)
+	render.Data(c, ipItem)
 }

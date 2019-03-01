@@ -19,8 +19,26 @@ CREATE TABLE `strategy` (
   `teams`       varchar(32)     NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-#ALTER TABLE strategy ADD ip varchar(255);
-#ALTER TABLE strategy ADD enable int(1) DEFAULT 1;
+
+
+DROP TABLE IF EXISTS `port_strategy`;
+CREATE TABLE `port_strategy` (
+  `id`          int(10)         unsigned NOT NULL AUTO_INCREMENT,
+  `host`        varchar(1024)   NOT NULL,
+  `port`        varchar(64)     not NULL,
+  `enable`      int(1)          NOT NULL DEFAULT 1,
+  `timeout`     varchar(255)    NOT NULL DEFAULT '',
+  `keywords`    varchar(255)    NOT NULL DEFAULT '',
+  `creator`     varchar(255)    NOT NULL DEFAULT '',
+  `ip`          varchar(255)    NOT NULL DEFAULT '',
+  `tag`         varchar(255)    NOT NULL DEFAULT '',
+  `note`        varchar(255)    NOT NULL DEFAULT '',
+  `max_step`    int(4)          NOT NULL DEFAULT 3,
+  `times`       int(4)          NOT NULL DEFAULT 3,
+  `teams`       varchar(32)     NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 
 
@@ -88,6 +106,25 @@ CREATE TABLE `event` (
   INDEX `idx_strategy_id` (`strategy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `port_event`;
+CREATE TABLE `port_event` (
+  `id`          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `event_id`    VARCHAR(64)     NOT NULL,
+  `status`      VARCHAR(32)     NOT NULL,
+  `host`        VARCHAR(256)    NOT NULL DEFAULT '',
+  `port`        Varchar(32)     NOT NULL DEFAULT '',
+  `ip`          VARCHAR(32)     NOT NULL DEFAULT '',
+  `strategy_id` INT,
+  `event_time`  INT(11),
+  `resp_time`   INT(6),
+  `result`      INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err',
+  `current_step`INT(1),
+  `max_step`    INT(1),
+  PRIMARY KEY (`id`),
+  INDEX `idx_strategy_id` (`strategy_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `item_status00`;
 CREATE TABLE `item_status00` (
   `id`        INT UNSIGNED  NOT NULL AUTO_INCREMENT,
@@ -102,3 +139,14 @@ CREATE TABLE `item_status00` (
   INDEX `idx_sid` (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `port_status00`;
+CREATE TABLE `port_status00` (
+  `id`        INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+  `sid`       INT UNSIGNED  NOT NULL,
+  `resp_time` INT(6),
+  `push_time` INT(10),
+  `result`    INT(1)        NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout',
+  PRIMARY KEY (`id`),
+  INDEX `idx_sid` (`sid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

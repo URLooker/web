@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/errors"
 )
 
 func String(r *http.Request, key string, defVal string) string {

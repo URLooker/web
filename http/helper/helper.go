@@ -1,11 +1,11 @@
 package helper
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"time"
 
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/model"
 )
 
 func Times1000(num int64) int64 {
@@ -20,7 +20,7 @@ func UsersOfTeam(tid int64) []*model.User {
 func TeamsOfStrategy(ids string) []*model.Team {
 	teams, err := model.GetTeamsByIds(ids)
 	if err != nil {
-		log.Println("get teams err", err)
+		log.Errorf("get teams err, detail:%v", err.Error())
 	}
 	return teams
 }

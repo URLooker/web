@@ -12,6 +12,7 @@ Web组件主要用于
 - [常见问题][2]
 - 初始用户名密码：admin/password
 
+## 新增功能
 ## Installation
 
 ```bash

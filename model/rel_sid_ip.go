@@ -3,8 +3,8 @@ package model
 import (
 	"time"
 
-	"github.com/urlooker/web/g"
-	. "github.com/urlooker/web/store"
+	"github.com/peng19940915/urlooker/web/g"
+	. "github.com/peng19940915/urlooker/web/store"
 )
 
 type RelSidIp struct {

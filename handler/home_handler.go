@@ -6,32 +6,59 @@ import (
 	"github.com/toolkits/str"
 	"github.com/toolkits/web"
 
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/param"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/param"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/gin-gonic/gin"
+	"github.com/peng19940915/urlooker/web/http/render"
 )
 
-func HomeIndex(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func HomeIndex(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 	username := me.Name
-	mine := param.Int(r, "mine", 1)
-	query := param.String(r, "q", "")
+	mine := param.Int(c.Request, "mine", 1)
+	query := param.String(c.Request, "q", "")
 	if str.HasDangerousCharacters(query) {
 		errors.Panic("查询字符不合法")
 	}
 
-	limit := param.Int(r, "limit", 10)
+	limit := param.Int(c.Request, "limit", 10)
 	total, err := model.GetAllStrategyCount(mine, query, username)
 	errors.MaybePanic(err)
-	pager := web.NewPaginator(r, limit, total)
+	pager := web.NewPaginator(c.Request, limit, total)
 
 	strategies, err := model.GetAllStrategy(mine, limit, pager.Offset(), query, username)
 
 	errors.MaybePanic(err)
-	render.Put(r, "Strategies", strategies)
-	render.Put(r, "Pager", pager)
-	render.Put(r, "Mine", mine)
-	render.Put(r, "Query", query)
-	render.HTML(r, w, "home/index")
+	render.HTML(http.StatusOK, c, "home/index", gin.H{
+		"Strategies": strategies,
+		"Pager": pager,
+		"Mine": mine,
+		"Query": query,
+	})
+}
+
+func QueryPortScan(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
+	username := me.Name
+	mine := param.Int(c.Request, "mine", 1)
+	query := param.String(c.Request, "q", "")
+	if str.HasDangerousCharacters(query) {
+		errors.Panic("查询字符不合法")
+	}
+
+	limit := param.Int(c.Request, "limit", 10)
+	total, err := model.GetAllPortStrategyCount(mine, query, username)
+	errors.MaybePanic(err)
+	pager := web.NewPaginator(c.Request, limit, total)
+
+	strategies, err := model.GetAllPortStrategy(mine, limit, pager.Offset(), query, username)
+
+	errors.MaybePanic(err)
+	render.HTML(http.StatusOK, c, "home/tcp_port_scan", gin.H{
+		"Strategies": strategies,
+		"Pager": pager,
+		"Mine": mine,
+		"Query": query,
+	})
 }

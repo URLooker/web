@@ -1,10 +1,10 @@
 package cron
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
 
-	"github.com/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/model"
 )
 
 func DeleteOld() {
@@ -14,12 +14,12 @@ func DeleteOld() {
 		<-t1.C
 		err := model.RelSidIpRepo.DeleteOld(int64(d))
 		if err != nil {
-			log.Println("delete error:", err)
+			log.Errorf("delete error: %v", err)
 		}
 
 		err = model.ItemStatusRepo.DeleteOld(int64(d))
 		if err != nil {
-			log.Println("delete error:", err)
+			log.Errorf("delete error: %v", err)
 		}
 	}
 }

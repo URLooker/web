@@ -9,7 +9,7 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/g"
 )
 
 func LookupIP(domain string, timeout int) ([]string, error) {
@@ -44,4 +44,9 @@ func LookupIP(domain string, timeout int) ([]string, error) {
 
 func InternalDns(domain string) []g.IpIdc {
 	return []g.IpIdc{}
+}
+
+// 获取主机所在的idc
+func InternalHostIdc(hostname string) string{
+	return "default"
 }

@@ -3,12 +3,13 @@ package handler
 import (
 	"net/http"
 
-	"github.com/urlooker/web/g"
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/param"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/model"
-	"github.com/urlooker/web/utils"
+	"github.com/peng19940915/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/param"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/utils"
+	"github.com/gin-gonic/gin"
+	"github.com/peng19940915/urlooker/web/http/render"
 )
 
 type Url struct {
@@ -16,8 +17,8 @@ type Url struct {
 	Status []*model.ItemStatus `json:"status"`
 }
 
-func UrlStatus(w http.ResponseWriter, r *http.Request) {
-	sid := param.MustInt64(r, "id")
+func UrlStatus(c *gin.Context) {
+	sid := param.MustInt64(c.Request, "id")
 
 	sidIpIndex, err := model.RelSidIpRepo.GetBySid(sid)
 	errors.MaybePanic(err)
@@ -50,16 +51,46 @@ func UrlStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	events, err := model.EventRepo.GetByStrategyId(sid, g.Config.Past*60)
+
 	errors.MaybePanic(err)
 
 	strategy, err := model.GetStrategyById(sid)
 	errors.MaybePanic(err)
 
-	render.Put(r, "AlarmOn", g.Config.Alarm.Enable)
-	render.Put(r, "TimeData", timeData)
-	render.Put(r, "Id", sid)
-	render.Put(r, "Url", strategy.Url)
-	render.Put(r, "Events", events)
-	render.Put(r, "Data", urlArr)
-	render.HTML(r, w, "chart/index")
+	render.HTML(http.StatusOK, c,"chart/index", gin.H{
+		"AlarmOn": g.Config.Alarm.Enable,
+		"TimeData": timeData,
+		"Id": sid,
+		"Url": strategy.Url,
+		"Events": events,
+		"Data": urlArr,
+	})
+}
+
+func PortStatus(c *gin.Context) {
+	sid := param.MustInt64(c.Request, "id")
+	var timeData [] string
+	portArr, err := model.PortStatusRepo.GetBySid(sid)
+	errors.MaybePanic(err)
+	// 绘图使用，时间轴
+	if len(portArr) > 0 {
+		for _, item := range(portArr){
+			t := utils.TimeFormat(item.PushTime)
+			timeData = append(timeData, t)
+		}
+	}
+	events, err := model.PortEventRepo.GetByPortStrategyId(sid, g.Config.Past * 60)
+	errors.MaybePanic(err)
+
+	strategy, err := model.GetPortStrategyById(sid)
+	errors.MaybePanic(err)
+	render.HTML(http.StatusOK, c,"chart/port_index", gin.H{
+		"AlarmOn": g.Config.Alarm.Enable,
+		"TimeData": timeData,
+		"Id": sid,
+		"Host": strategy.Host,
+		"Port": strategy.Port,
+		"Events": events,
+		"Data": portArr,
+	})
 }

@@ -1,80 +1,115 @@
 package http
 
 import (
-	"net/http"
-
-	"github.com/gorilla/mux"
-	"github.com/urlooker/web/handler"
+	"github.com/peng19940915/urlooker/web/handler"
+	"github.com/gin-gonic/gin"
+	"path/filepath"
+	log "github.com/sirupsen/logrus"
+	"os"
+	"strings"
 )
 
-func ConfigRouter(r *mux.Router) {
+func ConfigRouter(r *gin.Engine) {
+
 	configStraRoutes(r)
-	configStaticRoutes(r)
 	configApiRoutes(r)
 	configDomainRoutes(r)
 	configAuthRoutes(r)
 	configUserRoutes(r)
 	configTeamRoutes(r)
+	configPortStraRoutes(r)
 	configProcRoutes(r)
+	configPortDomainRoutes(r)
 }
 
-func configDomainRoutes(r *mux.Router) {
-	r.HandleFunc("/url", handler.UrlStatus).Methods("GET")
+func configDomainRoutes(r *gin.Engine) {
+	r.GET("/url", handler.UrlStatus)
 }
 
-func configChartRoutes(r *mux.Router) {
-	r.HandleFunc("/chart", handler.UrlStatus).Methods("GET")
+func configPortDomainRoutes(r *gin.Engine) {
+	r.GET("/port", handler.PortStatus)
+}
+func configChartRoutes(r *gin.Engine) {
+	r.GET("/chart", handler.UrlStatus)
 }
 
-func configApiRoutes(r *mux.Router) {
-	r.HandleFunc("/api/item/{hostname}", handler.GetHostIpItem).Methods("GET")
+func configApiRoutes(r *gin.Engine) {
+	r.GET("/api/item/{hostname}", handler.GetHostIpItem)
 }
 
-func configStraRoutes(r *mux.Router) {
-	r.HandleFunc("/", handler.HomeIndex).Methods("GET")
-	r.HandleFunc("/strategy/add", handler.AddStrategyGet).Methods("GET")
-	r.HandleFunc("/strategy/add", handler.AddStrategyPost).Methods("POST")
-	r.HandleFunc("/strategy/{id:[0-9]+}", handler.GetStrategyById).Methods("POST")
-	r.HandleFunc("/strategy/{id:[0-9]+}/delete", handler.DeleteStrategy).Methods("POST")
-	r.HandleFunc("/strategy/{id:[0-9]+}/edit", handler.UpdateStrategyGet).Methods("GET")
-	r.HandleFunc("/strategy/{id:[0-9]+}/edit", handler.UpdateStrategy).Methods("POST")
-	r.HandleFunc("/strategy/{id:[0-9]+}/teams", handler.GetTeamsOfStrategy).Methods("GET")
+func configStraRoutes(r *gin.Engine) {
+	r.GET("/", handler.HomeIndex)
+	r.GET("/strategy/add", handler.AddStrategyGet)
+	r.POST("/strategy/add", handler.AddStrategyPost)
+	r.POST("/strategy", handler.GetStrategyById)
+	r.POST("/strategy/delete", handler.DeleteStrategy)
+	r.GET("/strategy/edit", handler.UpdateStrategyGet)
+	r.POST("/strategy/edit", handler.UpdateStrategy)
+	r.GET("/strategy/teams", handler.GetTeamsOfStrategy)
 }
 
-func configAuthRoutes(r *mux.Router) {
-	r.HandleFunc("/auth/register", handler.RegisterPage).Methods("GET")
-	r.HandleFunc("/auth/register", handler.Register).Methods("POST")
-	r.HandleFunc("/auth/logout", handler.Logout).Methods("GET")
-	r.HandleFunc("/auth/login", handler.Login).Methods("POST")
-	r.HandleFunc("/auth/login", handler.LoginPage).Methods("GET")
+func configPortStraRoutes(r *gin.Engine){
+	r.GET("/tcp_port_scan", handler.QueryPortScan)
+	r.GET("/port_strategy/add", handler.AddPortStrategyGet)
+	r.POST("/port_strategy/add", handler.AddPortStrategyPost)
+
+	r.POST("/port_strategy", handler.GetPortStrategyById)
+	r.POST("/port_strategy/delete", handler.DeletePortStrategy)
+	r.GET("/port_strategy/edit", handler.UpdatePortStrategyGet)
+	r.POST("/port_strategy/edit", handler.UpdatePortStrategy)
+	r.GET("/port_strategy/teams", handler.GetPortTeamsOfStrategy)
 }
 
-func configUserRoutes(r *mux.Router) {
-	r.HandleFunc("/me.json", handler.MeJson).Methods("GET")
-	r.HandleFunc("/me/profile", handler.UpdateMyProfile).Methods("POST")
-	r.HandleFunc("/me/chpwd", handler.ChangeMyPasswd).Methods("POST")
-	r.HandleFunc("/users/query", handler.UsersJson).Methods("GET")
+func configAuthRoutes(r *gin.Engine) {
+	r.GET("/auth/register", handler.RegisterPage)
+	r.POST("/auth/register", handler.Register)
+
+	r.GET("/auth/logout", handler.Logout)
+	r.POST("/auth/login", handler.Login)
+	r.GET("/auth/login", handler.LoginPage)
 }
 
-func configTeamRoutes(r *mux.Router) {
-	r.HandleFunc("/teams", handler.TeamsPage).Methods("GET")
-	r.HandleFunc("/teams/query", handler.TeamsJson).Methods("GET")
-	r.HandleFunc("/team/create", handler.CreateTeamGet).Methods("GET")
-	r.HandleFunc("/team/create", handler.CreateTeamPost).Methods("POST")
-	r.HandleFunc("/team/{tid:[0-9]+}/edit", handler.UpdateTeamGet).Methods("GET")
-	r.HandleFunc("/team/{tid:[0-9]+}/edit", handler.UpdateTeamPost).Methods("POST")
-	r.HandleFunc("/team/{tid:[0-9]+}/users", handler.GetUsersOfTeam).Methods("GET")
+func configUserRoutes(r *gin.Engine) {
+	r.GET("/me.json", handler.MeJson)
+	r.POST("/me/profile", handler.UpdateMyProfile)
+	r.POST("/me/chpwd", handler.ChangeMyPasswd)
+	r.GET("/users/query", handler.UsersJson)
 }
 
-func configProcRoutes(r *mux.Router) {
+func configTeamRoutes(r *gin.Engine) {
+	r.GET("/teams", handler.TeamsPage)
+	r.GET("/teams/query", handler.TeamsJson)
+	r.GET("/team/create", handler.CreateTeamGet)
+	r.POST("/team/create", handler.CreateTeamPost)
+	r.GET("/team/{tid:[0-9]+}/edit", handler.UpdateTeamGet)
+	r.POST("/team/{tid:[0-9]+}/edit", handler.UpdateTeamPost)
+	r.GET("/team/{tid:[0-9]+}/users", handler.GetUsersOfTeam)
+}
+
+func configProcRoutes(r *gin.Engine) {
 	//r.HandleFunc("/log", handler.GetLog).Methods("GET")
-	r.HandleFunc("/version", handler.Version).Methods("GET")
+	r.GET("/version", handler.Version)
 }
-
-func configStaticRoutes(r *mux.Router) {
-	r.PathPrefix("/css").Handler(http.FileServer(http.Dir("./static")))
-	r.PathPrefix("/fonts").Handler(http.FileServer(http.Dir("./static")))
-	r.PathPrefix("/js").Handler(http.FileServer(http.Dir("./static")))
-	r.PathPrefix("/img").Handler(http.FileServer(http.Dir("./static")))
-	r.PathPrefix("/lib").Handler(http.FileServer(http.Dir("./static")))
+func ConfigStaticRoutes(r *gin.Engine) {
+	r.Static("/css", "./static")
+	r.Static("/fonts","./static")
+	r.Static("/js","./static")
+	r.Static("/img", "./static")
+	r.Static("/lib", "./static")
+}
+/*
+func configStaticRoutes(r *gin.Engine) {
+	r.GET("/css*", http.FileServer(http.Dir("./static"))
+	r.GET("/fonts*", http.FileServer(http.Dir("./static")))
+	r.GET("/js*").(http.FileServer(http.Dir("./static")))
+	r.GET("/img*").Handler(http.FileServer(http.Dir("./static")))
+	r.GET("/lib*").Handler(http.FileServer(http.Dir("./static")))
+}
+*/
+func getCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Error(err)
+	}
+	return strings.Replace(dir, "\\", "/", -1)
 }

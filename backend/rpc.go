@@ -1,7 +1,7 @@
 package backend
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 	"math"
 	"net"
 	"net/rpc"
@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/urlooker/web/g"
+	"github.com/peng19940915/urlooker/web/g"
 )
 
 type SingleConnRpcClient struct {
@@ -73,7 +73,7 @@ func (this *SingleConnRpcClient) Call(method string, args interface{}, reply int
 
 	select {
 	case <-time.After(timeout):
-		log.Printf("[WARN] rpc call timeout %v => %v", this.rpcClient, this.RpcServer)
+		log.Errorf("rpc call timeout %v => %v", this.rpcClient, this.RpcServer)
 		this.close()
 	case err := <-done:
 		if err != nil {

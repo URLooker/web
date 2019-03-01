@@ -2,28 +2,29 @@ package handler
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 
-	"github.com/urlooker/web/http/errors"
-	"github.com/urlooker/web/http/param"
-	"github.com/urlooker/web/http/render"
-	"github.com/urlooker/web/model"
-	"github.com/urlooker/web/utils"
+	"github.com/peng19940915/urlooker/web/http/errors"
+	"github.com/peng19940915/urlooker/web/http/param"
+	"github.com/peng19940915/urlooker/web/http/render"
+	"github.com/peng19940915/urlooker/web/model"
+	"github.com/peng19940915/urlooker/web/utils"
+	"github.com/gin-gonic/gin"
 )
 
-func AddStrategyGet(w http.ResponseWriter, r *http.Request) {
-	render.HTML(r, w, "strategy/create")
+func AddStrategyGet(c *gin.Context) {
+	render.HTML(http.StatusOK, c, "strategy/create", gin.H{})
 }
 
-func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
+func AddStrategyPost(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
 	var msg string
 	var err error
 	var tagStr string
 
-	urls := strings.Split(param.String(r, "url", ""), "\n")
+	urls := strings.Split(param.String(c.Request, "url", ""), "\n")
 	for _, url := range urls {
 		err := utils.CheckUrl(url)
 		if err != nil {
@@ -31,7 +32,7 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tags := strings.Split(param.String(r, "tags", ""), "\n")
+	tags := strings.Split(param.String(c.Request, "tags", ""), "\n")
 	if len(tags) > 0 && tags[0] != "" {
 		for _, tag := range tags {
 			strs := strings.Split(tag, "=")
@@ -45,18 +46,18 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 	for _, url := range urls {
 		var s = model.Strategy{}
 		s.Creator = me.Name
-		s.Enable = param.MustInt(r, "enable")
+		s.Enable = param.MustInt(c.Request, "enable")
 		s.Url = url
-		s.ExpectCode = param.String(r, "expect_code", "200")
-		s.Timeout = param.Int(r, "timeout", 3000)
-		s.MaxStep = param.Int(r, "max_step", 3)
-		s.Teams = param.MustString(r, "teams")
-		s.Times = param.Int(r, "times", 3)
-		s.Note = param.String(r, "note", "")
-		s.Keywords = param.String(r, "keywords", "")
-		s.Data = param.String(r, "data", "")
+		s.ExpectCode = param.String(c.Request, "expect_code", "200")
+		s.Timeout = param.Int(c.Request, "timeout", 3000)
+		s.MaxStep = param.Int(c.Request, "max_step", 3)
+		s.Teams = param.MustString(c.Request, "teams")
+		s.Times = param.Int(c.Request, "times", 3)
+		s.Note = param.String(c.Request, "note", "")
+		s.Keywords = param.String(c.Request, "keywords", "")
+		s.Data = param.String(c.Request, "data", "")
 		s.Tag = tagStr
-		s.IP = param.String(r, "ip", "")
+		s.IP = param.String(c.Request, "ip", "")
 
 		_, err = s.Add()
 		if err != nil {
@@ -71,23 +72,24 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 		errMsg := fmt.Sprintf("%s,err:%v", msg, err)
 		errors.Panic(errMsg)
 	}
-	render.Data(w, msg)
+	render.Data(c, msg)
 }
 
-func GetStrategyById(w http.ResponseWriter, r *http.Request) {
-	strategy := StraRequired(r)
-	render.Data(w, strategy)
+func GetStrategyById(c *gin.Context) {
+	strategy := StraRequired(c)
+	render.Data(c, strategy)
 }
 
-func UpdateStrategyGet(w http.ResponseWriter, r *http.Request) {
-	s := StraRequired(r)
-	render.Put(r, "Id", s.Id)
-	render.HTML(r, w, "strategy/edit")
+func UpdateStrategyGet(c *gin.Context) {
+	s := StraRequired(c)
+	render.HTML(http.StatusOK, c,"strategy/edit", gin.H{
+		"Id": s.Id,
+	})
 }
 
-func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
-	s := StraRequired(r)
-	me := MeRequired(LoginRequired(w, r))
+func UpdateStrategy(c *gin.Context) {
+	s := StraRequired(c)
+	me := MeRequired(LoginRequired(c))
 	var tagStr string
 
 	username := me.Name
@@ -95,15 +97,15 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 		errors.Panic("没有权限")
 	}
 
-	url := param.String(r, "url", "")
+	url := param.String(c.Request, "url", "")
 	err := utils.CheckUrl(url)
 	if err != nil {
 		errors.Panic(fmt.Sprintf("url:%s %s", url, err.Error()))
 	}
 
-	tags := strings.Split(param.String(r, "tags", ""), "\n")
+	tags := strings.Split(param.String(c.Request, "tags", ""), "\n")
 	if len(tags) > 0 && tags[0] != "" {
-		log.Println("len:", len(tags))
+		log.Info("len: %d", len(tags))
 		for _, tag := range tags {
 			strs := strings.Split(tag, "=")
 			if len(strs) != 2 {
@@ -117,26 +119,26 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 
 	s.Creator = username
 	s.Url = url
-	s.Enable = param.MustInt(r, "enable")
-	s.ExpectCode = param.String(r, "expect_code", "200")
-	s.Timeout = param.Int(r, "timeout", 3000)
-	s.MaxStep = param.Int(r, "max_step", 3)
-	s.Teams = param.String(r, "teams", "")
-	s.Times = param.Int(r, "times", 3)
-	s.Note = param.String(r, "note", "")
-	s.Keywords = param.String(r, "keywords", "")
-	s.Data = param.String(r, "data", "")
-	s.IP = param.String(r, "ip", "")
+	s.Enable = param.MustInt(c.Request, "enable")
+	s.ExpectCode = param.String(c.Request, "expect_code", "200")
+	s.Timeout = param.Int(c.Request, "timeout", 3000)
+	s.MaxStep = param.Int(c.Request, "max_step", 3)
+	s.Teams = param.String(c.Request, "teams", "")
+	s.Times = param.Int(c.Request, "times", 3)
+	s.Note = param.String(c.Request, "note", "")
+	s.Keywords = param.String(c.Request, "keywords", "")
+	s.Data = param.String(c.Request, "data", "")
+	s.IP = param.String(c.Request, "ip", "")
 	s.Tag = tagStr
 
 	err = s.Update()
 	errors.MaybePanic(err)
-	render.Data(w, "ok")
+	render.Data(c, "ok")
 }
 
-func DeleteStrategy(w http.ResponseWriter, r *http.Request) {
-	me := MeRequired(LoginRequired(w, r))
-	strategy := StraRequired(r)
+func DeleteStrategy(c *gin.Context) {
+	me := MeRequired(LoginRequired(c))
+	strategy := StraRequired(c)
 	//teams := strings.Split(strategy.Teams, ",")
 
 	username := me.Name
@@ -146,13 +148,13 @@ func DeleteStrategy(w http.ResponseWriter, r *http.Request) {
 
 	err := strategy.Delete()
 	errors.MaybePanic(err)
-	render.Data(w, "ok")
+	render.Data(c, "ok")
 }
 
-func GetTeamsOfStrategy(w http.ResponseWriter, r *http.Request) {
-	MeRequired(LoginRequired(w, r))
-	stra := StraRequired(r)
+func GetTeamsOfStrategy(c *gin.Context) {
+	MeRequired(LoginRequired(c))
+	stra := StraRequired(c)
 	teams, err := model.GetTeamsByIds(stra.Teams)
 	errors.MaybePanic(err)
-	render.Data(w, map[string]interface{}{"teams": teams})
+	render.Data(c, map[string]interface{}{"teams": teams})
 }
