@@ -12,6 +12,7 @@ import (
 	"github.com/peng19940915/urlooker/web/model"
 	"github.com/peng19940915/urlooker/web/utils"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func AddStrategyGet(c *gin.Context) {
@@ -48,11 +49,25 @@ func AddStrategyPost(c *gin.Context) {
 		s.Creator = me.Name
 		s.Enable = param.MustInt(c.Request, "enable")
 		s.Url = url
-		s.ExpectCode = param.String(c.Request, "expect_code", "200")
-		s.Timeout = param.Int(c.Request, "timeout", 3000)
-		s.MaxStep = param.Int(c.Request, "max_step", 3)
-		s.Teams = param.MustString(c.Request, "teams")
-		s.Times = param.Int(c.Request, "times", 3)
+		s.ExpectCode = param.String(c.Request, "expect_code","200")
+
+		timeout, err := strconv.Atoi(param.String(c.Request, "timeout", "6000"))
+		if err != nil {
+			errors.Panic("timeout 必须是数字")
+		}
+		s.Timeout = timeout
+		maxStep, err := strconv.Atoi(param.String(c.Request, "max_step", "3"))
+		if err != nil {
+			errors.Panic("告警发送次数必须是数字")
+		}
+		s.MaxStep = maxStep
+
+		times, err := strconv.Atoi(param.String(c.Request, "times", "3"))
+		if err != nil {
+			errors.Panic("连续异常次数必须是数字")
+		}
+		s.Times = times
+
 		s.Note = param.String(c.Request, "note", "")
 		s.Keywords = param.String(c.Request, "keywords", "")
 		s.Data = param.String(c.Request, "data", "")
@@ -121,10 +136,23 @@ func UpdateStrategy(c *gin.Context) {
 	s.Url = url
 	s.Enable = param.MustInt(c.Request, "enable")
 	s.ExpectCode = param.String(c.Request, "expect_code", "200")
-	s.Timeout = param.Int(c.Request, "timeout", 3000)
-	s.MaxStep = param.Int(c.Request, "max_step", 3)
+	timeout, err := strconv.Atoi(param.String(c.Request, "timeout", "6000"))
+	if err != nil {
+		errors.Panic("timeout 必须是数字")
+	}
+	s.Timeout = timeout
+	maxStep, err := strconv.Atoi(param.String(c.Request, "max_step", "3"))
+	if err != nil {
+		errors.Panic("告警发送次数必须是数字")
+	}
+	s.MaxStep = maxStep
+
+	times, err := strconv.Atoi(param.String(c.Request, "times", "3"))
+	if err != nil {
+		errors.Panic("连续异常次数必须是数字")
+	}
+	s.Times = times
 	s.Teams = param.String(c.Request, "teams", "")
-	s.Times = param.Int(c.Request, "times", 3)
 	s.Note = param.String(c.Request, "note", "")
 	s.Keywords = param.String(c.Request, "keywords", "")
 	s.Data = param.String(c.Request, "data", "")

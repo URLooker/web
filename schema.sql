@@ -11,7 +11,7 @@ CREATE TABLE `strategy` (
   `creator`     varchar(255)    NOT NULL DEFAULT '',
   `data`        varchar(1024)   NOT NULL DEFAULT '',
   `ip`          varchar(255)    NOT NULL DEFAULT '',
-  `expect_code` varchar(255)    NOT NULL DEFAULT '',
+  `expect_code` varchar(64)     NOT NULL DEFAULT '',
   `tag`         varchar(255)    NOT NULL DEFAULT '',
   `note`        varchar(255)    NOT NULL DEFAULT '',
   `max_step`    int(4)          NOT NULL DEFAULT 3,
