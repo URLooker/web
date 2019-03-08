@@ -54,21 +54,15 @@ type FalconConfig struct {
 	Interval int    `json:"interval"`
 }
 
-type LdapConfig struct {
-	Enabled    bool     `json:"enabled"`
-	Addr       string   `json:"addr"`
-	BindDN     string   `json:"bindDN"`
-	BaseDN     string   `json:"baseDN`
-	BindPasswd string   `json:"bindPasswd"`
-	UserField  string   `json:"userField"`
-	Attributes []string `json:"attributes"`
-}
 
 type InternalDnsConfig struct {
 	Enable bool   `json:"enable"`
 	Addr   string `json:"addr"`
 }
-
+type SSOConfig struct {
+	ServerUrl  string `json:"serverUrl"`
+	ServiceUrl string `json:"serviceUrl"`
+}
 type GlobalConfig struct {
 	Log         *Log                `json:"log"`
 	Admins      []string            `json:"admins"`
@@ -76,7 +70,7 @@ type GlobalConfig struct {
 	Past        int                 `json:"past"` //查看最近几分钟内的报警历史和绘图，默认为30分钟
 	Http        *HttpConfig         `json:"http"`
 	Rpc         *RpcConfig          `json:"rpc"`
-	Ldap        *LdapConfig         `json:"ldap"`
+	SSO         *SSOConfig          `json:"sso"`
 	Mysql       *MysqlConfig        `json:"mysql"`
 	Alarm       *AlarmConfig        `json:"alarm"`
 	Falcon      *FalconConfig       `json:"falcon"`

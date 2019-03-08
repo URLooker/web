@@ -15,7 +15,7 @@ func StartGin(port string, r *gin.Engine) {
 	r.Use(utils.CORS())
 	r.SetFuncMap(template.FuncMap{
 		"Times1000":       helper.Times1000,
-		"UsersOfTeam":     helper.UsersOfTeam,
+		"MailsOfTeam":     helper.MailsOfTeam,
 		"TeamsOfStrategy": helper.TeamsOfStrategy,
 		"HumenTime":       helper.HumenTime,
 		"GetFirst":        helper.GetFirst,

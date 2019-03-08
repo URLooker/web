@@ -40,18 +40,11 @@ CREATE TABLE `port_strategy` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
-
-
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id`        BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
   `name`      VARCHAR(64)      NOT NULL,
-  `cnname`    VARCHAR(64)      NOT NULL DEFAULT '',
-  `password`  VARCHAR(32)      NOT NULL,
-  `email`     VARCHAR(255)     NOT NULL DEFAULT '',
-  `phone`     VARCHAR(16)      NOT NULL DEFAULT '',
-  `wechat`    VARCHAR(255)     NOT NULL DEFAULT '',
-  `role`      TINYINT          NOT NULL DEFAULT 0,
+  `cnname`    VARCHAR(64),
   `created`   TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_user_name` (`name`)
@@ -70,12 +63,11 @@ CREATE TABLE `team` (
 
 DROP TABLE if EXISTS `rel_team_user`;
 CREATE TABLE `rel_team_user` (
-  `id`    BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `tid`   BIGINT UNSIGNED NOT NULL,
-  `uid`   BIGINT UNSIGNED NOT NULL,
+  `id`      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tid`     BIGINT UNSIGNED NOT NULL,
+  `email`   VARCHAR(128)    NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_rel_tid` (`tid`),
-  KEY `idx_rel_uid` (`uid`)
+  KEY `idx_rel_tid` (`tid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `rel_sid_ip`;

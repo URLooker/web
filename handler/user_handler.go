@@ -2,134 +2,27 @@ package handler
 
 import (
 	"net/http"
-	"strings"
-
 	"github.com/toolkits/str"
 
-	"github.com/peng19940915/urlooker/web/g"
 	"github.com/peng19940915/urlooker/web/http/cookie"
 	"github.com/peng19940915/urlooker/web/http/errors"
 	"github.com/peng19940915/urlooker/web/http/param"
 	"github.com/peng19940915/urlooker/web/http/render"
 	"github.com/peng19940915/urlooker/web/model"
-	"github.com/peng19940915/urlooker/web/utils"
 	"github.com/gin-gonic/gin"
+	"log"
+	"io/ioutil"
+	"github.com/bitly/go-simplejson"
+	"strings"
+	"github.com/peng19940915/urlooker/web/g"
 )
 
-func Register(c *gin.Context) {
-	if g.Config.Ldap.Enabled {
-		errors.Panic("注册已关闭")
-	}
-	username := param.MustString(c.Request, "username")
-	password := param.MustString(c.Request, "password")
-	repeat := param.MustString(c.Request, "repeat")
-
-	if password != repeat {
-		errors.Panic("两次输入的密码不一致")
-	}
-
-	if str.HasDangerousCharacters(username) {
-		errors.Panic("用户名不合法，请不要使用非法字符")
-	}
-
-	userid, err := model.UserRegister(username, utils.EncryptPassword(password))
-	errors.MaybePanic(err)
-
-	render.Data(c, cookie.WriteUser(c, userid, username))
-}
-
-func RegisterPage(c *gin.Context) {
-	render.HTML(http.StatusOK, c,"auth/register", gin.H{
-		"Title": "register",
-		"callback": param.String(c.Request, "callback", "/"),
-	})
-}
 
 func Logout(c *gin.Context) {
 	errors.MaybePanic(cookie.RemoveUser(c))
 	c.Redirect(http.StatusFound, "/")
 }
 
-func LoginPage(c *gin.Context) {
-	render.HTML(http.StatusOK, c,"auth/login", gin.H{
-		"Title": "login",
-		"callback": param.String(c.Request, "callback", "/"),
-	})
-}
-
-func Login(c *gin.Context) {
-	username := param.MustString(c.Request, "username")
-	password := param.MustString(c.Request, "password")
-
-	if str.HasDangerousCharacters(username) {
-		errors.Panic("用户名不合法，请不要使用非法字符")
-	}
-
-	var u *model.User
-	var userid int64
-	if g.Config.Ldap.Enabled {
-		sucess, err := utils.LdapBind(g.Config.Ldap.Addr,
-			g.Config.Ldap.BaseDN,
-			g.Config.Ldap.BindDN,
-			g.Config.Ldap.BindPasswd,
-			g.Config.Ldap.UserField,
-			username,
-			password)
-
-		errors.MaybePanic(err)
-		if !sucess {
-			errors.Panic("name or password error")
-			return
-		}
-
-		userAttributes, err := utils.Ldapsearch(g.Config.Ldap.Addr,
-			g.Config.Ldap.BaseDN,
-			g.Config.Ldap.BindDN,
-			g.Config.Ldap.BindPasswd,
-			g.Config.Ldap.UserField,
-			username,
-			g.Config.Ldap.Attributes)
-		userSn := ""
-		userMail := ""
-		userTel := ""
-		if err == nil {
-			userSn = userAttributes["sn"]
-			userMail = userAttributes["mail"]
-			userTel = userAttributes["telephoneNumber"]
-		}
-
-		arr := strings.Split(username, "@")
-		var userName, userEmail string
-		if len(arr) == 2 {
-			userName = arr[0]
-			userEmail = username
-		} else {
-			userName = username
-			userEmail = userMail
-		}
-
-		u, err = model.GetUserByName(userName)
-		errors.MaybePanic(err)
-		if u == nil {
-			// 说明用户不存在
-			u = &model.User{
-				Name:     userName,
-				Password: "",
-				Cnname:   userSn,
-				Phone:    userTel,
-				Email:    userEmail,
-			}
-			errors.MaybePanic(u.Save())
-		}
-		userid = u.Id
-	} else {
-		var err error
-		userid, err = model.UserLogin(username, utils.EncryptPassword(password))
-		errors.MaybePanic(err)
-	}
-
-	render.Data(c, cookie.WriteUser(c, userid, username))
-}
 
 func MeJson(c *gin.Context) {
 	render.Data(c, MeRequired(LoginRequired(c)))
@@ -155,54 +48,92 @@ func UsersJson(c *gin.Context) {
 	render.Data(c, users)
 }
 
-func UpdateMyProfile(c *gin.Context) {
-	me := MeRequired(LoginRequired(c))
 
-	cnname := param.String(c.Request, "cnname", "")
-	email := param.String(c.Request, "email", "")
-	phone := param.String(c.Request, "phone", "")
-	wechat := param.String(c.Request, "wechat", "")
+func LoginSSO(c *gin.Context){
 
-	if str.HasDangerousCharacters(cnname) {
-		errors.Panic("中文名不合法")
-	}
-	if email != "" && !str.IsMail(email) {
-		errors.Panic("邮箱不合法")
-	}
-	if phone != "" && !str.IsPhone(phone) {
-		errors.Panic("手机号不合法")
-	}
-	if str.HasDangerousCharacters(wechat) {
-		errors.Panic("微信不合法")
+	_, _, _, found := cookie.ReadUser(c)
+	if found {
+		// 如果cookie中已经包含就直接跳转
+		c.Redirect(302, "/")
+	}else {
+		ticket := c.Query("ticket")
+		if ticket == ""{
+			c.Redirect(302, g.Config.SSO.ServerUrl+"?service="+g.Config.SSO.ServiceUrl)
+		}else {
+			if verifyTicket(ticket){
+				_, userEmail, cnName := getUserInfo(ticket)
+				userArr := strings.Split(userEmail, "@")
+				username := userArr[0]
+				userId, err := model.NewUser(username, cnName)
+				if err != nil {
+					errors.Panic(err.Error())
+				}
+				cookie.WriteUser(c, userId, username, cnName)
+				c.Redirect(302, "/")
+			}
+		}
 	}
 
-	me.Cnname = cnname
-	me.Email = email
-	me.Phone = phone
-	me.Wechat = wechat
-	errors.MaybePanic(me.UpdateProfile())
-	render.Data(c, "ok")
 }
 
-func ChangeMyPasswd(c *gin.Context) {
+func getUserInfo(ticket string) (newTicket string, loginEmail string, chineseName string) {
+	url := g.Config.SSO.ServerUrl+"/api/v2/validate"
+	client := http.Client{}
 
-	uid, _ := LoginRequired(c)
-	me, err := model.GetUserPwById(uid)
-	errors.MaybePanic(err)
-
-	oldPasswd := param.MustString(c.Request, "old_password")
-	newPasswd := param.MustString(c.Request, "new_password")
-	repeat := param.MustString(c.Request, "repeat")
-
-	if newPasswd != repeat {
-		errors.Panic("两次输入的密码不一致")
+	req, _ := http.NewRequest("GET",url, nil)
+	req.Header.Set("s-ticket", ticket)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
 	}
-
-	err = me.ChangePasswd(utils.EncryptPassword(oldPasswd), utils.EncryptPassword(newPasswd))
-	if err == nil {
-		cookie.RemoveUser(c)
+	defer resp.Body.Close()
+	b, _ := ioutil.ReadAll(resp.Body)
+	jsonObj, err := simplejson.NewJson(b)
+	if err != nil{
+		log.Println(err)
 	}
+	infoData := jsonObj.Get("data")
+	loginEmail, err = infoData.Get("LoginEmail").String()
+	if err != nil{
+		log.Println(err)
+	}
+	chineseName, err = infoData.Get("DisplayName").String()
+	if err != nil {
+		log.Println(err)
+	}
+	newTicket, err = infoData.Get("Ticket").String()
+	if err != nil{
+		log.Println(err)
+	}
+	return newTicket, loginEmail, chineseName
+}
+func verifyTicket(ticket string) bool{
+	validateUrl := g.Config.SSO.ServerUrl+"/api/v2/validate"
+	client := http.Client{}
 
-	errors.MaybePanic(err)
-	render.Data(c, "ok")
+	req, _ := http.NewRequest("GET",validateUrl, nil)
+	req.Header.Set("ticket", ticket)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	b, _:= ioutil.ReadAll(resp.Body)
+
+	jsonObj, err := simplejson.NewJson(b)
+
+	if err != nil{
+		log.Println(err)
+		return false
+	}
+	errorCode,err := jsonObj.Get("errorCode").Int()
+	if err != nil {
+		log.Println("get errorCode failed:", err)
+		return false
+	}
+	if errorCode == 0 || errorCode == 1 {
+		log.Println("verfyTicket success.")
+		return true
+	}
+	return false
 }

@@ -10,7 +10,7 @@ import (
 
 type UsersResponse struct {
 	Message string
-	Data    []*model.User
+	Data    []*model.RelTeamUser
 }
 
 func (this *Web) GetUsersByTeam(req string, reply *UsersResponse) error {
@@ -19,14 +19,14 @@ func (this *Web) GetUsersByTeam(req string, reply *UsersResponse) error {
 		reply.Message = "user no exists!"
 		return nil
 	}
-	allUsers := make([]*model.User, 0)
+	allUsers := make([]*model.RelTeamUser, 0)
 	for _, tid := range tids {
 		id, err := strconv.ParseInt(tid, 10, 64)
 		if err != nil {
 			log.Errorf("tid error,detail: %v", err)
 			continue
 		}
-		users, err := model.UsersInfoOfTeam(id)
+		users, err := model.MailsOfTeam(id)
 		if err != nil {
 			reply.Message = err.Error()
 		}

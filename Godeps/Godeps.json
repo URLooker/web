@@ -4,9 +4,18 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
+			"ImportPath": "github.com/bitly/go-simplejson",
+			"Comment": "v0.5.0-8-g0c96595",
+			"Rev": "0c965951289cce37dec52ad1f34200fefc816777"
+		},
+		{
 			"ImportPath": "github.com/codegangsta/negroni",
 			"Comment": "v1.0.0-26-g390728d",
 			"Rev": "390728d3c6ab037195ad3ac12daaa0304b0e681a"
+		},
+		{
+			"ImportPath": "github.com/gin-contrib/sessions",
+			"Rev": "1532893d996f0fedbac1162ea1311ebfb57a3da5"
 		},
 		{
 			"ImportPath": "github.com/gin-contrib/sse",
@@ -58,9 +67,19 @@
 			"Rev": "b5d812f8a3706043e23a9cd5babf2e5423744d30"
 		},
 		{
+			"ImportPath": "github.com/gorilla/context",
+			"Comment": "v1.1.1-1-g51ce91d",
+			"Rev": "51ce91d2eaddeca0ef29a71d766bb3634dadf729"
+		},
+		{
 			"ImportPath": "github.com/gorilla/securecookie",
 			"Comment": "v1.1.1-9-ge65cf8c",
 			"Rev": "e65cf8c5df817c89aeb47ecb46064e802e2de943"
+		},
+		{
+			"ImportPath": "github.com/gorilla/sessions",
+			"Comment": "v1.1.3-6-g12bd476",
+			"Rev": "12bd4761fc66ac946e16fcc2a32b1e0b066f6177"
 		},
 		{
 			"ImportPath": "github.com/json-iterator/go",

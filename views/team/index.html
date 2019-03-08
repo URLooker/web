@@ -1,3 +1,4 @@
+{{ define "team/index"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,15 +38,20 @@
                     <td width="20%">{{.Resume}}</td>
                     <td width="50%">
                         <div class="mt10">
-                            {{range UsersOfTeam .Id}}
-                                <code class="users green">{{.Name}}</code>
+                            {{range MailsOfTeam .Id}}
+                                <code class="users green">{{.Email}}</code>
                             {{end}}
                         </div>
                     </td>
                     <td width="10%">{{.CreatorName}}</td>
                     <td width="10%">
-                        <a data-toggle="tooltip" data-placement="top" title="修改" href="/team/{{.Id}}/edit" style="text-decoration:none;">
+                        <a data-toggle="tooltip" data-placement="top" title="修改" href="/team/edit?tid={{.Id}}" style="text-decoration:none;">
                             <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        &nbsp
+                        <span class="cut-line"></span>
+                        <a data-toggle="tooltip" data-placement="top" title="删除" href="javascript:del_team('{{.Id}}');">
+                            <span class="glyphicon glyphicon-remove"></span>
                         </a>
                     </td>
                 </tr>
@@ -55,7 +61,7 @@
 
         {{ template "inc/pager" . }}
     </div>
-
+    <script src="/js/team.js?_v=0.0.1"></script>
 <script type="text/javascript">
     function search() {
         location.href="/teams?q="+$.trim($("#query").val());
@@ -69,7 +75,9 @@
         });
     });
 </script>
+<script src="/js/team.js?_v=0.0.1"></script>
 {{ template "inc/footer" . }}
 
 </body>
 </html>
+{{end}}

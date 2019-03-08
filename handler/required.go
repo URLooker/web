@@ -59,32 +59,12 @@ func HostnameRequired(c *gin.Context) string {
 }
 
 func LoginRequired(c *gin.Context) (int64, string) {
-	userid, username, found := cookie.ReadUser(c)
+	userid, username, _,found := cookie.ReadUser(c)
 	if !found {
 		panic(errors.NotLoginError())
 	}
 
 	return userid, username
-}
-
-func AdminRequired(id int64, name string) {
-	user, err := model.GetUserById(id)
-	if err != nil {
-		panic(errors.InternalServerError(err.Error()))
-	}
-
-	if user == nil {
-		panic(errors.NotLoginError())
-	}
-
-	for _, admin := range g.Config.Admins {
-		if user.Name == admin {
-			return
-		}
-	}
-
-	panic(errors.NotLoginError())
-	return
 }
 
 func MeRequired(id int64, name string) *model.User {
@@ -115,22 +95,6 @@ func TeamRequired(c *gin.Context) *model.Team {
 	}
 
 	return team
-}
-
-func UserMustBeMemberOfTeam(uid, tid int64) {
-	is, err := model.IsMemberOfTeam(uid, tid)
-	errors.MaybePanic(err)
-	if is {
-		return
-	}
-
-	team, err := model.GetTeamById(tid)
-	errors.MaybePanic(err)
-	if team != nil && team.Creator == uid {
-		return
-	}
-
-	panic(errors.BadRequestError("用户不是团队的成员"))
 }
 
 func IsAdmin(username string) bool {

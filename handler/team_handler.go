@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/toolkits/str"
@@ -14,26 +13,30 @@ import (
 	"github.com/peng19940915/urlooker/web/http/render"
 	"github.com/peng19940915/urlooker/web/model"
 	"github.com/gin-gonic/gin"
+	"github.com/peng19940915/urlooker/web/utils"
 )
 
 func TeamsPage(c *gin.Context) {
 	me := MeRequired(LoginRequired(c))
-
 	query := param.String(c.Request, "q", "")
 	if str.HasDangerousCharacters(query) {
 		errors.Panic("查询字符不合法")
 	}
 	limit := param.Int(c.Request, "limit", 10)
 
-	total, err := model.TeamCountOfUser(query, me.Id)
+	total, err := model.TeamCountOfUser(query)
 	errors.MaybePanic(err)
 	pager := web.NewPaginator(c.Request, limit, total)
-	teams, err := model.TeamsOfUser(query, me.Id, limit, pager.Offset())
+	teams, err := model.Teams(query, limit, pager.Offset())
 	errors.MaybePanic(err)
 	for _, team := range teams {
 		user, err := model.GetUserById(team.Creator)
 		if err == nil && user != nil {
-			team.CreatorName = user.Name
+			if user.Cnname == ""{
+				team.CreatorName = user.Name
+			}else {
+				team.CreatorName = user.Cnname
+			}
 		}
 	}
 	render.HTML(http.StatusOK, c, "team/index", gin.H{
@@ -65,7 +68,7 @@ func TeamsJson(c *gin.Context) {
 func CreateTeamGet(c *gin.Context) {
 	me := MeRequired(LoginRequired(c))
 
-	c.HTML(http.StatusOK, "team/create", gin.H{
+	render.HTML(http.StatusOK, c,"team/create", gin.H{
 		"Me": me,
 		"Title": "Team",
 	})
@@ -83,31 +86,24 @@ func CreateTeamPost(c *gin.Context) {
 		errors.Panic("resume不合法")
 	}
 
-	uidsStr := param.String(c.Request, "users", "")
-	if str.HasDangerousCharacters(uidsStr) {
-		errors.Panic("users不合法")
+	emailsStr := param.String(c.Request, "emails", "")
+	if str.HasDangerousCharacters(emailsStr) {
+		errors.Panic("emails不合法")
 	}
-	uidSlice := strings.Split(uidsStr, ",")
-
-	isci := false
-	uids := make([]int64, 0)
-	for _, u := range uidSlice {
+	emailSlice := strings.Split(emailsStr, ",")
+	emails := make([]string, 0)
+	for _, u := range emailSlice {
 		if u == "" {
 			continue
 		}
-		uid, err := strconv.ParseInt(u, 10, 64)
-		errors.MaybePanic(err)
-		uids = append(uids, uid)
-		if uid == me.Id {
-			isci = true
+		if !utils.CheckEmail(u){
+			errors.Panic(u+": email address is wrong!")
 		}
-	}
-	if !isci {
-		// creator is member of team
-		uids = append(uids, me.Id)
-	}
+		u = strings.TrimSpace(u)
+		emails = append(emails, u)
 
-	_, err := model.AddTeam(name, resume, me.Id, uids)
+	}
+	_, err := model.AddTeam(name, resume, me.Id, emails)
 	render.MaybeError(c, err)
 }
 
@@ -115,18 +111,18 @@ func UpdateTeamGet(c *gin.Context) {
 	team := TeamRequired(c)
 	me := MeRequired(LoginRequired(c))
 	if !IsAdmin(me.Name) {
-		UserMustBeMemberOfTeam(me.Id, team.Id)
+
 	}
 
-	uids := make([]string, 0)
-	users, err := model.UsersOfTeam(team.Id)
+	emails := make([]string, 0)
+	relTeamUsers, err := model.MailsOfTeam(team.Id)
 	errors.MaybePanic(err)
-	for _, user := range users {
-		uids = append(uids, strconv.FormatInt(user.Id, 10))
+	for _, user := range relTeamUsers {
+		emails = append(emails, user.Email)
 	}
 	render.HTML(http.StatusOK, c,"team/edit",gin.H{
 		"Team": team,
-		"Uids": strings.Join(uids, ","),
+		"Emails": strings.Join(emails, ","),
 		"Me": me,
 		"Title": "Team",
 	})
@@ -135,37 +131,51 @@ func UpdateTeamGet(c *gin.Context) {
 func UpdateTeamPost(c *gin.Context) {
 	me := MeRequired(LoginRequired(c))
 	team := TeamRequired(c)
-	if !IsAdmin(me.Name) {
-		UserMustBeMemberOfTeam(me.Id, team.Id)
+	if me.Id != team.Creator && !IsAdmin(me.Name) {
+		errors.Panic("权限不足")
 	}
 
 	team.Resume = param.String(c.Request, "resume", "")
 	if str.HasDangerousCharacters(team.Resume) {
 		errors.Panic("resume不合法")
 	}
-	uidsStr := param.String(c.Request, "users", "")
-	if str.HasDangerousCharacters(uidsStr) {
-		errors.Panic("users不合法")
+	emailsStr := param.String(c.Request, "emails", "")
+	if str.HasDangerousCharacters(emailsStr) {
+		errors.Panic("emails不合法")
 	}
-	uidsSlice := strings.Split(uidsStr, ",")
-	uids := make([]int64, 0)
-	for _, uidStr := range uidsSlice {
-		if uidStr == "" {
+	emailsSlice := strings.Split(emailsStr, ",")
+	emails := make([]string, 0)
+	for _, emailStr := range emailsSlice {
+		if emailStr == "" {
 			continue
 		}
-		uid, err := strconv.ParseInt(uidStr, 10, 64)
-		errors.MaybePanic(err)
-		uids = append(uids, uid)
+		if !utils.CheckEmail(emailStr){
+			errors.Panic(emailStr+": email address is wrong!")
+		}
+		emails = append(emails, emailStr)
 	}
 
-	render.Data(c, team.Update(uids))
+	render.Data(c, team.Update(emails))
 }
 
 func GetUsersOfTeam(c *gin.Context) {
 	MeRequired(LoginRequired(c))
 	team := TeamRequired(c)
 
-	users, err := model.UsersOfTeam(team.Id)
+	users, err := model.MailsOfTeam(team.Id)
 	errors.MaybePanic(err)
 	render.Data(c, users)
+}
+
+func DeleteTeam(c *gin.Context) {
+	user := MeRequired(LoginRequired(c))
+	team := TeamRequired(c)
+	if user.Id != team.Creator && ! IsAdmin(user.Name){
+		errors.Panic("权限不足")
+	}
+	err := model.RemoveTeamById(team.Id)
+	if err != nil {
+		errors.Panic("delete failed: "+team.Name+"detail: "+err.Error())
+	}
+	render.Data(c, nil)
 }

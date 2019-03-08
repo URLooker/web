@@ -30,7 +30,7 @@ func GetTeamById(id int64) (*Team, error) {
 	return obj, nil
 }
 
-func AddTeam(name, resume string, creator int64, uids []int64) (int64, error) {
+func AddTeam(name, resume string, creator int64, emails []string) (int64, error) {
 	if !(len(name) > 0 && creator > 0) {
 		return 0, fmt.Errorf("团队信息有误")
 	}
@@ -57,7 +57,7 @@ func AddTeam(name, resume string, creator int64, uids []int64) (int64, error) {
 		return 0, err
 	}
 
-	err = addUsersIntoTeam(team.Id, uids, session)
+	err = addUsersIntoTeam(team.Id, emails, session)
 	if err != nil {
 		session.Rollback()
 		return 0, err
@@ -94,7 +94,7 @@ func RemoveTeamById(tid int64) error {
 	return nil
 }
 
-func (this *Team) Update(uids []int64) error {
+func (this *Team) Update(emails []string) error {
 	session := Orm.NewSession()
 	defer session.Close()
 	err := session.Begin()
@@ -108,7 +108,7 @@ func (this *Team) Update(uids []int64) error {
 		return err
 	}
 
-	err = updateUsersOfTeam(this.Id, uids, session)
+	err = updateUsersOfTeam(this.Id, emails, session)
 	if err != nil {
 		session.Rollback()
 		return err

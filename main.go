@@ -12,7 +12,6 @@ import (
 	"github.com/peng19940915/urlooker/web/g"
 	"github.com/peng19940915/urlooker/web/http"
 	"github.com/peng19940915/urlooker/web/http/cookie"
-	"github.com/peng19940915/urlooker/web/model"
 	"github.com/peng19940915/urlooker/web/sender"
 	"github.com/peng19940915/urlooker/web/store"
 	"github.com/gin-gonic/gin"
@@ -27,7 +26,6 @@ func prepare() {
 
 func init() {
 	prepare()
-
 	cfg := flag.String("c", "cfg.json", "configuration file")
 	version := flag.Bool("v", false, "show version")
 	help := flag.Bool("h", false, "help")
@@ -44,13 +42,9 @@ func init() {
 }
 
 func main() {
-	err := model.AdminRegister()
-	if err != nil {
-		log.Fatalln(err)
-	}
 	go api.Start()
 	router := gin.Default()
-	go http.StartGin("127.0.0.1:1984", router)
+	go http.StartGin("0.0.0.0:1984", router)
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {

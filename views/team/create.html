@@ -1,4 +1,4 @@
-{{define "team/index"}}
+{{define "team/create"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,8 +22,8 @@
                     type="text" id="resume" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="users">成员：</label> <input
-                    type="text" id="users" class="form-control" />
+                    <label for="emails">收件箱，多个逗号隔开：</label> <input
+                    type="text" id="emails" class="form-control" />
                 </div>
                 <button type="button" class="btn btn-default" onclick="create_team();">
                     <span class="glyphicon glyphicon-floppy-disk"></span>
@@ -36,34 +36,7 @@
             </div>
         </div>
     </div>
-    
-<script type="text/javascript">
-$(function() {
-    $("#users").select2({
-        placeholder: "输入要添加组员的name",
-        allowClear: true,
-        multiple: true,
-        quietMillis: 100,
-        minimumInputLength: 1,
-        id: function(obj){return obj.id;},
-        ajax: {
-            url: "/users/query",
-            dataType: 'json',
-            data: function(term, page) {
-                return {
-                    query: term,
-                    limit: 20
-                };
-            },
-            results: function(json, page) {
-                return {results: json.data};
-            }
-        },
-        formatResult: function(obj) {return obj.name + "["+obj.cnname+"]" + "["+obj.email+"]"},
-        formatSelection: function(obj) {return obj.name},
-    });
-});
-</script>
+
 <script src="/js/team.js?_v=0.0.1"></script>
 {{ template "inc/footer" . }}
 

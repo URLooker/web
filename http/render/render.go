@@ -9,10 +9,14 @@ import (
 
 
 func HTML(status int, c *gin.Context, name string, params gin.H, htmlOpt ...render.HTMLOptions) {
-	userid, username, found := cookie.ReadUser(c)
+	userid, username, cnName, found := cookie.ReadUser(c)
+	if cnName == "" {
+		params["UserName"] = username
+	} else {
+		params["UserName"] = cnName
+	}
 	params["HasLogin"] = found
 	params["UserId"] = userid
-	params["UserName"] = username
 	c.HTML(status, name, params)
 }
 

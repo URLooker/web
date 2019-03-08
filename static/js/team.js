@@ -2,7 +2,7 @@ function create_team() {
     $.post('/team/create', {
         'name' : $("#name").val(),
         'resume' : $("#resume").val(),
-        'users' : $("#users").val()
+        'emails' : $("#emails").val()
     }, function(json) {
         handle_json(json, function(){
             location.href = '/teams';
@@ -11,12 +11,20 @@ function create_team() {
 }
 
 function edit_team(org_id, team_id) {
-    $.post('/team/'+team_id+'/edit', {
+    $.post('/team/edit?tid='+team_id, {
         'resume' : $("#resume").val(),
         'users' : $("#users").val(),
     }, function(json) {
         handle_json(json, function(){
             location.href = '/teams';
+        });
+    });
+}
+
+function del_team(team_id){
+    my_confirm("确定删除此团队？", [ '确定', '取消' ], function() {
+        $.post('/team/delete?tid='+team_id, {}, function(json) {
+            handle_json(json, function (){location.reload()})
         });
     });
 }

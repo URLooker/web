@@ -6,7 +6,11 @@
         "maxAge": 7,
         "rotationTime": 1
     },
-    "admins":["ning","admin"],
+    "sso": {
+        "serverUrl": "",
+        "serviceUrl": "http://10.139.14.165:1984/auth/login"
+    },
+    "admins":["leiyupeng","admin"],
     "salt": "have fun!",
     "past": 30,
     "http": {
@@ -20,15 +24,6 @@
         "addr": "root:test456@tcp(10.201.82.28:3306)/urlooker?charset=utf8&&loc=Asia%2FShanghai",
         "idle": 10,
         "max": 20
-    },
-    "ldap": {
-        "enabled": false,
-        "addr": "ldap.example.com:389",
-        "baseDN": "dc=example,dc=com",
-        "bindDN": "cn=mananger,dc=example,dc=com",
-        "bindPasswd": "12345678",
-        "userField": "uid",
-        "attributes": ["sn","mail","telephoneNumber"]
     },
     "alarm":{
         "enable": true,

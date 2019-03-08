@@ -3,10 +3,6 @@ package http
 import (
 	"github.com/peng19940915/urlooker/web/handler"
 	"github.com/gin-gonic/gin"
-	"path/filepath"
-	log "github.com/sirupsen/logrus"
-	"os"
-	"strings"
 )
 
 func ConfigRouter(r *gin.Engine) {
@@ -61,18 +57,14 @@ func configPortStraRoutes(r *gin.Engine){
 }
 
 func configAuthRoutes(r *gin.Engine) {
-	r.GET("/auth/register", handler.RegisterPage)
-	r.POST("/auth/register", handler.Register)
 
 	r.GET("/auth/logout", handler.Logout)
-	r.POST("/auth/login", handler.Login)
-	r.GET("/auth/login", handler.LoginPage)
+	r.Any("/auth/login", handler.LoginSSO)
+	//r.GET("/auth/login", handler.LoginPage)
 }
 
 func configUserRoutes(r *gin.Engine) {
 	r.GET("/me.json", handler.MeJson)
-	r.POST("/me/profile", handler.UpdateMyProfile)
-	r.POST("/me/chpwd", handler.ChangeMyPasswd)
 	r.GET("/users/query", handler.UsersJson)
 }
 
@@ -81,35 +73,14 @@ func configTeamRoutes(r *gin.Engine) {
 	r.GET("/teams/query", handler.TeamsJson)
 	r.GET("/team/create", handler.CreateTeamGet)
 	r.POST("/team/create", handler.CreateTeamPost)
-	r.GET("/team/{tid:[0-9]+}/edit", handler.UpdateTeamGet)
-	r.POST("/team/{tid:[0-9]+}/edit", handler.UpdateTeamPost)
-	r.GET("/team/{tid:[0-9]+}/users", handler.GetUsersOfTeam)
+
+	r.GET("/team/edit", handler.UpdateTeamGet)
+	r.POST("/team/edit", handler.UpdateTeamPost)
+	r.GET("/team/users", handler.GetUsersOfTeam)
+	r.POST("/team/delete", handler.DeleteTeam)
 }
 
 func configProcRoutes(r *gin.Engine) {
 	//r.HandleFunc("/log", handler.GetLog).Methods("GET")
 	r.GET("/version", handler.Version)
-}
-func ConfigStaticRoutes(r *gin.Engine) {
-	r.Static("/css", "./static")
-	r.Static("/fonts","./static")
-	r.Static("/js","./static")
-	r.Static("/img", "./static")
-	r.Static("/lib", "./static")
-}
-/*
-func configStaticRoutes(r *gin.Engine) {
-	r.GET("/css*", http.FileServer(http.Dir("./static"))
-	r.GET("/fonts*", http.FileServer(http.Dir("./static")))
-	r.GET("/js*").(http.FileServer(http.Dir("./static")))
-	r.GET("/img*").Handler(http.FileServer(http.Dir("./static")))
-	r.GET("/lib*").Handler(http.FileServer(http.Dir("./static")))
-}
-*/
-func getCurrentDirectory() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Error(err)
-	}
-	return strings.Replace(dir, "\\", "/", -1)
 }

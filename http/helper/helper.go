@@ -12,8 +12,8 @@ func Times1000(num int64) int64 {
 	return (num + 3600*8) * 1000
 }
 
-func UsersOfTeam(tid int64) []*model.User {
-	users, _ := model.UsersOfTeam(tid)
+func MailsOfTeam(tid int64) []*model.RelTeamUser {
+	users, _ := model.MailsOfTeam(tid)
 	return users
 }
 
