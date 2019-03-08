@@ -10,10 +10,10 @@ function create_team() {
     });
 }
 
-function edit_team(org_id, team_id) {
+function edit_team(team_id) {
     $.post('/team/edit?tid='+team_id, {
         'resume' : $("#resume").val(),
-        'users' : $("#users").val(),
+        'emails' : $("#emails").val(),
     }, function(json) {
         handle_json(json, function(){
             location.href = '/teams';
