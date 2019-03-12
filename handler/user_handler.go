@@ -20,7 +20,8 @@ import (
 
 func Logout(c *gin.Context) {
 	errors.MaybePanic(cookie.RemoveUser(c))
-	c.Redirect(http.StatusFound, "/")
+	logoutUrl := g.Config.SSO.ServerUrl + "/logout?service=" + g.Config.SSO.ServiceUrl
+	c.Redirect(http.StatusFound, logoutUrl)
 }
 
 

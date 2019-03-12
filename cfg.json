@@ -7,8 +7,8 @@
         "rotationTime": 1
     },
     "sso": {
-        "serverUrl": "",
-        "serviceUrl": "http://10.139.14.165:1984/auth/login"
+        "serverUrl": "https://sso-cas.gridsumdissector.com",
+        "serviceUrl": "http://10.139.14.143:1984/auth/login"
     },
     "admins":["leiyupeng","admin"],
     "salt": "have fun!",
