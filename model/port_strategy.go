@@ -23,14 +23,14 @@ type PortStrategy struct {
 func GetAllPortStrategyCount(mine int, query, username string) (int64, error) {
 	if mine == 1 {
 		if query != "" {
-			return Orm.Where("host LIKE ? AND creator = ? ORDER BY id", "%"+query+"%", username).Count(new(PortStrategy))
+			return Orm.Where("host LIKE ? AND creator = ?", "%"+query+"%", username).Count(new(PortStrategy))
 		} else {
 			num, err := Orm.Where("creator = ?", username).Count(new(PortStrategy))
 			return num, err
 		}
 	} else {
 		if query != "" {
-			return Orm.Where("host LIKE ? ORDER BY id", "%"+query+"%").Count(new(PortStrategy))
+			return Orm.Where("host LIKE ?", "%"+query+"%").Count(new(PortStrategy))
 		} else {
 			num, err := Orm.Count(new(PortStrategy))
 			return num, err
@@ -45,13 +45,13 @@ func GetAllPortStrategy(mine, limit, offset int, query, username string) ([]*Por
 	var err error
 	if mine == 1 {
 		if query != "" {
-			err = Orm.Where("host LIKE ? AND creator = ? ORDER BY id", "%"+query+"%", username).Limit(limit, offset).Find(&items)
+			err = Orm.Where("host LIKE ? AND creator = ? ", "%"+query+"%", username).Limit(limit, offset).Find(&items)
 		} else {
 			err = Orm.Where("creator = ?", username).Limit(limit, offset).Find(&items)
 		}
 	} else {
 		if query != "" {
-			err = Orm.Where("host LIKE ? ORDER BY id", "%"+query+"%").Limit(limit, offset).Find(&items)
+			err = Orm.Where("host LIKE ?", "%"+query+"%").Limit(limit, offset).Find(&items)
 		} else {
 			err = Orm.Limit(limit, offset).Find(&items)
 		}
