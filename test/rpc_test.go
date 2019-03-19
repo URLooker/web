@@ -5,7 +5,7 @@ import (
 	"github.com/toolkits/net"
 	"time"
 	"fmt"
-	"github.com/urlooker/web/api"
+	"github.com/peng19940915/urlooker/web/api"
 )
 
 func Test_RRpc(t * testing.T) {

@@ -24,7 +24,17 @@ type PortEvent struct {
 var PortEventRepo * PortEvent
 
 func (this *PortEvent) Insert() error {
+	if this.Status == "OK" {
+		_, err := Orm.Exec(`update port_event set status=? where event_id= ?`,"OK", this.EventId)
+
+		return err
+	}
 	_, err := Orm.Insert(this)
+	return err
+}
+
+func (this *PortEvent) Update()error {
+	_,err := Orm.Update(this)
 	return err
 }
 
@@ -50,4 +60,25 @@ func (this *PortEvent) String() string {
 		this.CurrentStep,
 		this.MaxStep,
 	)
+}
+
+func GetAllPortEventCounter(query string)(int64, error){
+	if query != "" {
+		return Orm.Where("host LIKE ?", "%"+query+"%").Desc("event_time").Count(new(Event))
+	}else {
+		num, err := Orm.Desc("status").Count(new(Event))
+		return num, err
+	}
+}
+
+func GetAllPortEvent(limit, offset int, query string)([]*PortEvent, error) {
+	items := make([]*PortEvent, 0)
+	var err error
+	if query != "" {
+		err = Orm.Where("host LIKE ? ORDER BY event_id", "%"+query+"%").Limit(limit).Find(&items)
+
+	}else {
+		err = Orm.Desc("status").Limit(limit, offset).Find(&items)
+	}
+	return items, err
 }

@@ -1,0 +1,76 @@
+{{define "alarm/url_alarm"}}
+<!DOCTYPE html>
+<html>
+<head>
+{{ template "inc/head" . }}
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+</head>
+<body>
+{{ template "inc/nav" . }}
+<div class="all">
+    <!-- search -->
+    <div class="form-inline mb20" role="form">
+        <div class="form-group">
+            <input type="text" class="form-control" id="query" value="{{$.Query}}">
+        </div>
+        <button onclick="query_item()" class="btn btn-default">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+    </div>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>IP</th>
+            <th>响应时间(ms)</th>
+            <th>最近报警时间</th>
+            <th>最新返回状态码</th>
+            <th>告警状态</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Events}}
+        <tr>
+            <td id="item_id">
+                {{.Id}}
+            </td>
+            <td id="url">{{.Url}}</td>
+            <td id="ip">{{ .Ip }}</td>
+            <td id="resp_time">{{.RespTime}}</td>
+            <td id="alarm_time">{{ .AlarmTime }}</td>
+            <td id="resp_code">{{ .RespCode }}</td>
+            <td id="status" >
+                {{ if eq .Status "OK"}}
+                <code style="color: green;">{{.Status}}</code>
+                {{else }}
+                <code style="color: red;">{{.Status}}</code>
+                {{end}}
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+{{ template "inc/pager" . }}
+</div>
+
+<script type="text/javascript">
+
+    function query_item() {
+        var query = $.trim($("#query").val());
+        window.location.href="/url_alarm?q="+query;
+    }
+    $(function() {
+        $("#query").keypress(function(e) {
+            var key = e.which;
+            if (key == 13) {
+                query_item();
+            }
+        });
+    });
+</script>
+{{ template "inc/footer" . }}
+</body>
+</html>
+{{end}}

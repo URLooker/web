@@ -16,6 +16,7 @@ func ConfigRouter(r *gin.Engine) {
 	configPortStraRoutes(r)
 	configProcRoutes(r)
 	configPortDomainRoutes(r)
+	configAlarmRoutes(r)
 }
 
 func configDomainRoutes(r *gin.Engine) {
@@ -83,4 +84,9 @@ func configTeamRoutes(r *gin.Engine) {
 func configProcRoutes(r *gin.Engine) {
 	//r.HandleFunc("/log", handler.GetLog).Methods("GET")
 	r.GET("/version", handler.Version)
+}
+
+func configAlarmRoutes(r *gin.Engine) {
+	r.GET("/url_alarm", handler.GetURLAlarm)
+	r.GET("/port_alarm", handler.GETPortAlarm)
 }

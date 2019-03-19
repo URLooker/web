@@ -12,6 +12,8 @@ func (this *Web) SaveEvent(event *model.Event, reply *string) error {
 	return nil
 }
 
+
+
 func (this *Web) SavePortEvent(event *model.PortEvent, reply *string) error {
 	err := event.Insert()
 	if err != nil {
@@ -19,3 +21,4 @@ func (this *Web) SavePortEvent(event *model.PortEvent, reply *string) error {
 	}
 	return nil
 }
+

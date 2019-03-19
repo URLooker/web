@@ -82,18 +82,19 @@ CREATE TABLE `rel_sid_ip` (
 
 DROP TABLE IF EXISTS `event`;
 CREATE TABLE `event` (
-  `id`          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `event_id`    VARCHAR(64)     NOT NULL,
-  `status`      VARCHAR(32)     NOT NULL,
-  `url`         VARCHAR(256)    NOT NULL DEFAULT '',
-  `ip`          VARCHAR(32)     NOT NULL DEFAULT '',
-  `strategy_id` INT,
-  `event_time`  INT(11),
-  `resp_time`   INT(6),
-  `resp_code`   VARCHAR(3),
-  `result`      INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err', 
-  `current_step`INT(1),
-  `max_step`    INT(1),
+  `id`            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `event_id`      VARCHAR(64)     NOT NULL,
+  `status`        VARCHAR(32)     NOT NULL,
+  `url`           VARCHAR(256)    NOT NULL DEFAULT '',
+  `ip`            VARCHAR(32)     NOT NULL DEFAULT '',
+  `strategy_id`   INT,
+  `event_time`    INT(11),
+  `resp_time`     INT(6),
+  `recovery_time` INT(11),
+  `resp_code`     VARCHAR(3),
+  `result`        INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err',
+  `current_step`  INT(1),
+  `max_step`      INT(1),
   PRIMARY KEY (`id`),
   INDEX `idx_strategy_id` (`strategy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -101,18 +102,19 @@ CREATE TABLE `event` (
 
 DROP TABLE IF EXISTS `port_event`;
 CREATE TABLE `port_event` (
-  `id`          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `event_id`    VARCHAR(64)     NOT NULL,
-  `status`      VARCHAR(32)     NOT NULL,
-  `host`        VARCHAR(256)    NOT NULL DEFAULT '',
-  `port`        Varchar(32)     NOT NULL DEFAULT '',
-  `ip`          VARCHAR(32)     NOT NULL DEFAULT '',
-  `strategy_id` INT,
-  `event_time`  INT(11),
-  `resp_time`   INT(6),
-  `result`      INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err',
-  `current_step`INT(1),
-  `max_step`    INT(1),
+  `id`            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `event_id`      VARCHAR(64)     NOT NULL,
+  `status`        VARCHAR(32)     NOT NULL,
+  `host`          VARCHAR(256)    NOT NULL DEFAULT '',
+  `port`          Varchar(32)     NOT NULL DEFAULT '',
+  `ip`            VARCHAR(32)     NOT NULL DEFAULT '',
+  `strategy_id`   INT,
+  `event_time`    INT(11),
+  `resp_time`     INT(6),
+  `result`        INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err',
+  `recovery_time` INT(11),
+  `current_step`  INT(1),
+  `max_step`      INT(1),
   PRIMARY KEY (`id`),
   INDEX `idx_strategy_id` (`strategy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
