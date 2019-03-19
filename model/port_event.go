@@ -75,8 +75,8 @@ func GetAllPortEvent(limit, offset int, query string)([]*PortEvent, error) {
 	items := make([]*PortEvent, 0)
 	var err error
 	if query != "" {
-		err = Orm.Where("host LIKE ? ORDER BY event_id", "%"+query+"%").Limit(limit).Find(&items)
-
+		err = Orm.Where("host LIKE ?", "%"+query+"%").Limit(limit).Find(&items)
+		fmt.Println(query)
 	}else {
 		err = Orm.Desc("status").Limit(limit, offset).Find(&items)
 	}
