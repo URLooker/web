@@ -82,3 +82,10 @@ func GetAllPortEvent(limit, offset int, query string)([]*PortEvent, error) {
 	}
 	return items, err
 }
+
+func DeleteOldPortEvent() error{
+	ts := time.Now().Unix() - 2592000
+	sql := fmt.Sprintf("delete from port_event where event_time < ?")
+	_, err := Orm.Exec(sql, ts)
+	return err
+}

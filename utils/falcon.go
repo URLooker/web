@@ -13,7 +13,7 @@ var transport *http.Transport = &http.Transport{}
 func PushFalcon(itemCheckedArray []*g.CheckResult, hostname string) {
 	pushDatas := make([]*g.MetricValue, 0)
 	for _, itemChecked := range itemCheckedArray {
-		tags := fmt.Sprintf("ip=%s,domain=%s,creator=%s,from=%s", itemChecked.Ip, itemChecked.Domain, itemChecked.Creator, hostname)
+		tags := fmt.Sprintf("url=%s,ip=%s,creator=%s,from=%s", itemChecked.Target,itemChecked.Ip, itemChecked.Creator, hostname)
 		if len(itemChecked.Tag) > 0 { //补充用户自定义tag
 			tags += "," + itemChecked.Tag
 		}
@@ -46,7 +46,7 @@ func getMetric(item *g.CheckResult, metric, tags string, value int64) g.MetricVa
 func PushPort2Falcon(itemCheckedArray []*g.CheckPortResult, hostname string) {
 	pushDatas := make([]*g.MetricValue, 0)
 	for _, itemChecked := range itemCheckedArray {
-		tags := fmt.Sprintf("ip=%s,host=%s,creator=%s,from=%s", itemChecked.Ip, itemChecked.Host, itemChecked.Creator, hostname)
+		tags := fmt.Sprintf("ip=%s,host=%s,port=%s,creator=%s,from=%s", itemChecked.Ip, itemChecked.Host, itemChecked.Port,itemChecked.Creator, hostname)
 		if len(itemChecked.Tag) > 0 { //补充用户自定义tag
 			tags += "," + itemChecked.Tag
 		}

@@ -85,3 +85,9 @@ func GetAllEvent(limit, offset int, query string)([]*Event, error) {
 	return items, err
 }
 
+func DeleteOldEvent() error{
+	ts := time.Now().Unix() - 2592000
+	sql := fmt.Sprintf("delete from event where event_time < ?")
+	_, err := Orm.Exec(sql, ts)
+	return err
+}
