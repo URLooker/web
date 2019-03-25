@@ -73,6 +73,7 @@ type GlobalConfig struct {
 	SSO         *SSOConfig          `json:"sso"`
 	Mysql       *MysqlConfig        `json:"mysql"`
 	Alarm       *AlarmConfig        `json:"alarm"`
+	DnsServer   string              `json:"dnsServer"`
 	Falcon      *FalconConfig       `json:"falcon"`
 	InternalDns *InternalDnsConfig  `json:"internalDns"`
 	MonitorMap  map[string][]string `json:"monitorMap"`

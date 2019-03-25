@@ -24,7 +24,7 @@ func LookupIP(domain string, timeout int) ([]string, error) {
 	m := new(dns.Msg)
 	m.SetQuestion(domain, dns.TypeA)
 
-	ret, _, err := c.Exchange(m, "114.114.114.114:53")
+	ret, _, err := c.Exchange(m, g.Config.DnsServer)
 	if err != nil {
 		domain = strings.TrimRight(domain, ".")
 		e := fmt.Sprintf("lookup error: %s, %s", domain, err.Error())

@@ -53,6 +53,7 @@
         "timeout": 3000,
         "interval": 60
     },
+    "dnsServer": "10.201.40.137:53",
     "internalDns":{
         "enable": false,
         "addr":""
