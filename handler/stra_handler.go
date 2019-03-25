@@ -67,7 +67,10 @@ func AddStrategyPost(c *gin.Context) {
 			errors.Panic("连续异常次数必须是数字")
 		}
 		s.Times = times
-
+		s.Teams = param.String(c.Request, "teams", "")
+		if s.Teams == "" {
+			errors.Panic("请填写正确的告警组")
+		}
 		s.Note = param.String(c.Request, "note", "")
 		s.Keywords = param.String(c.Request, "keywords", "")
 		s.Data = param.String(c.Request, "data", "")

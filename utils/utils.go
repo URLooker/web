@@ -165,7 +165,8 @@ func CORS() gin.HandlerFunc {
 }
 
 func CheckEmail(email string) (b bool) {
-	if m, _ := regexp.MatchString("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+", email); !m {
+	if m, _ := regexp.MatchString("[\\w!#$%&'+/=?^_{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_{|}~-]+)@(?:\\w?.)+\\w?", email); !m {
+	//if m, _ := regexp.MatchString("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+", email); !m {
 		return false
 	}
 	return true
