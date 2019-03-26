@@ -21,6 +21,7 @@ type RenderEvent struct {
 	AlarmCount    int
 	AlarmTime     string
 	RespCode      string
+	ResumeTime    string
 }
 
 func GetURLAlarm(c *gin.Context) {
@@ -50,6 +51,7 @@ func GetURLAlarm(c *gin.Context) {
 			AlarmTime: utils.TranUnix2String(event.EventTime),
 			RespCode: event.RespCode,
 			Status: event.Status,
+			ResumeTime: utils.TranUnix2String(event.ResumeTime),
 		})
 	}
 	render.HTML(http.StatusOK, c, "alarm/url_alarm", gin.H{
@@ -69,6 +71,7 @@ type RenderPortEvent struct {
 	Status        string
 	AlarmCount    int
 	AlarmTime     string
+	ResumeTime    string
 }
 
 func GETPortAlarm(c *gin.Context){
@@ -97,6 +100,7 @@ func GETPortAlarm(c *gin.Context){
 			AlarmTime: utils.TranUnix2String(event.EventTime),
 			Port: event.Port,
 			Status: event.Status,
+			ResumeTime:utils.TranUnix2String(event.ResumeTime),
 		})
 	}
 

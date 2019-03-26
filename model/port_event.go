@@ -19,13 +19,15 @@ type PortEvent struct {
 	Result      int64  `json:"result"`
 	CurrentStep int    `json:"current_step"`
 	MaxStep     int    `json:"max_step"`
+	ResumeTime  int64  `json:"resume_time"`
 }
 
 var PortEventRepo * PortEvent
 
 func (this *PortEvent) Insert() error {
+	now := time.Now().Unix()
 	if this.Status == "OK" {
-		_, err := Orm.Exec(`update port_event set status=? where event_id= ?`,"OK", this.EventId)
+		_, err := Orm.Exec(`update port_event set status=?,resume_time=? where event_id= ? `,"OK", now, this.EventId)
 
 		return err
 	}
@@ -83,9 +85,23 @@ func GetAllPortEvent(limit, offset int, query string)([]*PortEvent, error) {
 	return items, err
 }
 
-func DeleteOldPortEvent() error{
+func GetPortAlarmEvent()([]*PortEvent, error) {
+	items := make([]*PortEvent, 0)
+	var err error
+	err = Orm.Where("status=?", "PROBLEM").Find(&items)
+	return items, err
+}
+
+func DeleteOldPortEvent(strategy_id int64) error{
+	/*删除30天前的告警
 	ts := time.Now().Unix() - 2592000
 	sql := fmt.Sprintf("delete from port_event where event_time < ?")
 	_, err := Orm.Exec(sql, ts)
+	*/
+	// 将策略已经删除的告警修改状态
+	now := time.Now().Unix()
+	fmt.Println("Id:",strategy_id)
+	sql := fmt.Sprintf("update port_event set status=?,resume_time=? where strategy_id=?")
+	_, err := Orm.Exec(sql, "DELETE", now, strategy_id)
 	return err
 }

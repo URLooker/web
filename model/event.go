@@ -20,13 +20,15 @@ type Event struct {
 	Result       int64  `json:"result"`
 	CurrentStep  int    `json:"current_step"`
 	MaxStep      int    `json:"max_step"`
+	ResumeTime   int64  `json:"resume_time"`
 }
 
 var EventRepo *Event
 
 func (this *Event) Insert() error {
+	now := time.Now().Unix()
 	if this.Status == "OK" {
-		_, err := Orm.Exec(`update event set status=? where event_id= ?`,"OK", this.EventId)
+		_, err := Orm.Exec(`update event set status=?, resume_time=? where event_id= ?`,"OK", now, this.EventId)
 		return err
 	}
 	_, err := Orm.Insert(this)
@@ -85,9 +87,16 @@ func GetAllEvent(limit, offset int, query string)([]*Event, error) {
 	return items, err
 }
 
-func DeleteOldEvent() error{
-	ts := time.Now().Unix() - 2592000
-	sql := fmt.Sprintf("delete from event where event_time < ?")
-	_, err := Orm.Exec(sql, ts)
+func GetAlarmEvent()([]*Event, error) {
+	items := make([]*Event, 0)
+	var err error
+	err = Orm.Where("status=?", "PROBLEM").Find(&items)
+	return items, err
+}
+
+func DeleteOldEvent(strategy_id int64) error{
+	now := time.Now().Unix()
+	sql := fmt.Sprintf("update event set status=?,resume_time=? where strategy_id=?")
+	_, err := Orm.Exec(sql, "DELETE", now,strategy_id)
 	return err
 }

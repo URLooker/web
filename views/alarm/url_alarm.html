@@ -28,6 +28,7 @@
             <th>最近报警时间</th>
             <th>最新返回状态码</th>
             <th>告警状态</th>
+            <th>恢复时间</th>
         </tr>
         </thead>
         <tbody>
@@ -44,10 +45,13 @@
             <td id="status" >
                 {{ if eq .Status "OK"}}
                 <code style="color: green;">{{.Status}}</code>
-                {{else }}
+                {{else if eq .Status "DELETE"}}
+                <code style="color: dodgerblue">{{.Status}}</code>
+                {{else}}
                 <code style="color: red;">{{.Status}}</code>
                 {{end}}
             </td>
+            <td id="resume_time">{{ .ResumeTime }}</td>
         </tr>
         {{end}}
         </tbody>

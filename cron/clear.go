@@ -26,15 +26,5 @@ func DeleteOld() {
 		if err != nil {
 			log.Errorf("delete error: %v", err)
 		}
-		// 清理过期port event (30d)
-		err = model.DeleteOldPortEvent()
-		if err != nil {
-			log.Errorf("delete error: %v", err)
-		}
-
-		err = model.DeleteOldEvent()
-		if err != nil {
-			log.Errorf("delete error: %v", err)
-		}
 	}
 }

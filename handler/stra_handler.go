@@ -179,6 +179,8 @@ func DeleteStrategy(c *gin.Context) {
 
 	err := strategy.Delete()
 	errors.MaybePanic(err)
+	err = model.DeleteOldEvent(strategy.Id)
+	errors.MaybePanic(err)
 	render.Data(c, "ok")
 }
 
