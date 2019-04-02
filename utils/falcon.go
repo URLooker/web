@@ -37,8 +37,8 @@ func PushFalcon(itemCheckedArray []*g.CheckResult, hostname string) {
 		pushDatas = append(pushDatas, &data)
 
 		//url 响应时间
-		data = getMetric(itemChecked, "url_resp_time", tags, int64(itemChecked.RespTime))
-		pushDatas = append(pushDatas, &data)
+		data2 := getMetric(itemChecked, "url_resp_time", tags, int64(itemChecked.RespTime))
+		pushDatas = append(pushDatas, &data2)
 	}
 
 	err := push(pushDatas)
@@ -51,6 +51,7 @@ func getMetric(item *g.CheckResult, metric, tags string, value int64) MetricValu
 	var data MetricValue
 	data.Endpoint = fmt.Sprintf("url_%d", item.Sid)
 	data.Timestamp = item.PushTime
+	data.Metric = metric
 	data.Type = "GAUGE"
 	data.Step = int64(g.Config.Falcon.Interval)
 	data.Tags = tags

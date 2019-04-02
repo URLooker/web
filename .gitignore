@@ -1,5 +1,5 @@
 var/
-cfg.json*
+cfg.json
 urlooker-*
 cfg.local.json
 *DS_Store

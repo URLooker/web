@@ -45,7 +45,7 @@ func AddStrategyPost(w http.ResponseWriter, r *http.Request) {
 	for _, url := range urls {
 		var s = model.Strategy{}
 		s.Creator = me.Name
-		s.Enable = param.MustInt(r, "enable")
+		s.Enable = param.Int(r, "enable", 1)
 		s.Url = url
 		s.ExpectCode = param.String(r, "expect_code", "200")
 		s.Timeout = param.Int(r, "timeout", 3000)
@@ -117,7 +117,7 @@ func UpdateStrategy(w http.ResponseWriter, r *http.Request) {
 
 	s.Creator = username
 	s.Url = url
-	s.Enable = param.MustInt(r, "enable")
+	s.Enable = param.Int(r, "enable", 1)
 	s.ExpectCode = param.String(r, "expect_code", "200")
 	s.Timeout = param.Int(r, "timeout", 3000)
 	s.MaxStep = param.Int(r, "max_step", 3)

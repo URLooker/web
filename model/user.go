@@ -5,6 +5,7 @@ import (
 	"time"
 
 	. "github.com/urlooker/web/store"
+	"github.com/urlooker/web/utils"
 )
 
 type User struct {
@@ -92,7 +93,7 @@ func AdminRegister() error {
 		return nil
 	}
 
-	user := &User{Name: "admin", Password: "password"}
+	user := &User{Name: "admin", Password: utils.EncryptPassword("password")}
 	_, err = Orm.Insert(user)
 	if err != nil {
 		return err

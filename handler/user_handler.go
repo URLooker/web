@@ -143,11 +143,6 @@ func UsersJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users, err := model.QueryUsers(query, limit)
-	for _, u := range users {
-		t := *u
-		t.Name = "n1ng"
-		users = append(users, &t)
-	}
 	errors.MaybePanic(err)
 
 	render.Data(w, users)
