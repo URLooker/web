@@ -91,7 +91,7 @@ func getUserInfo(ticket string) (newTicket string, loginEmail string, chineseNam
 	b, _ := ioutil.ReadAll(resp.Body)
 	jsonObj, err := simplejson.NewJson(b)
 	if err != nil{
-		log.Println("tran to json failed, detail: ",err, "data:",string(b))
+		log.Println("tran to json failed when get user info, detail: ",err, "data:",string(b))
 	}
 	infoData := jsonObj.Get("data")
 	loginEmail, err = infoData.Get("LoginEmail").String()
@@ -124,7 +124,7 @@ func verifyTicket(ticket string) bool{
 	jsonObj, err := simplejson.NewJson(b)
 
 	if err != nil{
-		log.Println(err)
+		log.Println("tran to json failed whenverify ticket, detail: ",err, "data:",string(b))
 		return false
 	}
 	errorCode,err := jsonObj.Get("errorCode").Int()
