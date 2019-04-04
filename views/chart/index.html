@@ -8,6 +8,7 @@
     {{ template "inc/nav_chart" . }}
 
     <body>
+
     <div id="main"></div>
     {{ if .AlarmOn }}
     <div id="event">
@@ -73,7 +74,16 @@
                 type: 'line',
                 symbolSize: 8,
                 hoverAnimation: false,
-                data:[{{range .Status}}{{.RespTime}},{{end}}]
+
+                data:[
+                {{range .Status}}
+                    {
+                        value: {{.RespTime}},
+
+                    },
+
+                {{end}}
+                ]
             },
             {{end}}
             ]
@@ -81,6 +91,10 @@
 
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
+        myChart.on('click', function(param) {
+            var url = param.data.url;
+            window.location.href=url;
+        });
     </script>
     
 {{ template "inc/footer" . }}

@@ -85,26 +85,26 @@ func getUserInfo(ticket string) (newTicket string, loginEmail string, chineseNam
 	req.Header.Set("s-ticket", ticket)
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println(err)
+		log.Println("",err)
 	}
 	defer resp.Body.Close()
 	b, _ := ioutil.ReadAll(resp.Body)
 	jsonObj, err := simplejson.NewJson(b)
 	if err != nil{
-		log.Println(err)
+		log.Println("tran to json failed, detail: ",err, "data:",string(b))
 	}
 	infoData := jsonObj.Get("data")
 	loginEmail, err = infoData.Get("LoginEmail").String()
 	if err != nil{
-		log.Println(err)
+		log.Println("get login email failed, detail:", err)
 	}
 	chineseName, err = infoData.Get("DisplayName").String()
 	if err != nil {
-		log.Println(err)
+		log.Println("get display name failed,detail: ",err)
 	}
 	newTicket, err = infoData.Get("Ticket").String()
 	if err != nil{
-		log.Println(err)
+		log.Println("get tiket failed, detail: ",err)
 	}
 	return newTicket, loginEmail, chineseName
 }

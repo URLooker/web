@@ -95,7 +95,7 @@ CREATE TABLE `event` (
   `result`        INT(1)          NOT NULL DEFAULT 0 COMMENT '0:no error, 1:timeout, 2:expect code err, 3,keyword unmatch 4:dns err',
   `current_step`  INT(1),
   `max_step`      INT(1),
-  `resume_time`   INT(11),        NOT NULL DEFAULT 0
+  `resume_time`   INT(11)         NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_strategy_id` (`strategy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -116,7 +116,7 @@ CREATE TABLE `port_event` (
   `recovery_time` INT(11),
   `current_step`  INT(1),
   `max_step`      INT(1),
-  `resume_time`   INT(11),        NOT NULL DEFAULT 0,
+  `resume_time`   INT(11)         NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `idx_strategy_id` (`strategy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
