@@ -113,7 +113,7 @@ func verifyTicket(ticket string) bool{
 	client := http.Client{}
 
 	req, _ := http.NewRequest("GET",validateUrl, nil)
-	req.Header.Set("ticket", ticket)
+	req.Header.Set("s-ticket", ticket)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)

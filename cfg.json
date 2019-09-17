@@ -8,7 +8,7 @@
     },
     "sso": {
         "serverUrl": "https://sso-cas.gridsumdissector.com",
-        "serviceUrl": "http://10.202.226.230:1984/auth/login"
+        "serviceUrl": "http://10.201.82.28:1984/auth/login"
     },
     "admins":["leiyupeng","admin"],
     "salt": "have fun!",
