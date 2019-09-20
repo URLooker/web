@@ -52,7 +52,7 @@ func WriteUser(c *gin.Context, id int64, name string, cnName string) error {
 		return err
 	}
 
-	c.SetCookie("u", encoded, 3600 * 24 * 7, "/","", false, true)
+	c.SetCookie("u", encoded, 0, "/","", false, true)
 
 	return nil
 }

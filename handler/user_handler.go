@@ -61,8 +61,8 @@ func LoginSSO(c *gin.Context){
 		if ticket == ""{
 			c.Redirect(302, g.Config.SSO.ServerUrl+"?service="+g.Config.SSO.ServiceUrl)
 		}else {
-			if verifyTicket(ticket){
-				_, userEmail, cnName := getUserInfo(ticket)
+			if flag, tgtTiket:=verifyTicket(ticket); flag{
+				userEmail, cnName := getUserInfo(tgtTiket)
 				userArr := strings.Split(userEmail, "@")
 				username := userArr[0]
 				userId, err := model.NewUser(username, cnName)
@@ -77,12 +77,12 @@ func LoginSSO(c *gin.Context){
 
 }
 
-func getUserInfo(ticket string) (newTicket string, loginEmail string, chineseName string) {
-	url := g.Config.SSO.ServerUrl+"/api/v2/validate"
+func getUserInfo(ticket string) (loginEmail string, chineseName string) {
+	url := g.Config.SSO.ServerUrl+"/api/v2/info"
 	client := http.Client{}
 
 	req, _ := http.NewRequest("GET",url, nil)
-	req.Header.Set("s-ticket", ticket)
+	req.Header.Set("ticket", ticket)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("",err)
@@ -102,17 +102,15 @@ func getUserInfo(ticket string) (newTicket string, loginEmail string, chineseNam
 	if err != nil {
 		log.Println("get display name failed,detail: ",err)
 	}
-	newTicket, err = infoData.Get("Ticket").String()
-	if err != nil{
-		log.Println("get tiket failed, detail: ",err)
-	}
-	return newTicket, loginEmail, chineseName
+
+	return loginEmail, chineseName
 }
-func verifyTicket(ticket string) bool{
+
+func verifyTicket(ticket string) (bool, string){
 	validateUrl := g.Config.SSO.ServerUrl+"/api/v2/validate"
 	client := http.Client{}
-
 	req, _ := http.NewRequest("GET",validateUrl, nil)
+
 	req.Header.Set("s-ticket", ticket)
 	resp, err := client.Do(req)
 	if err != nil {
@@ -122,19 +120,27 @@ func verifyTicket(ticket string) bool{
 	b, _:= ioutil.ReadAll(resp.Body)
 
 	jsonObj, err := simplejson.NewJson(b)
-
 	if err != nil{
-		log.Println("tran to json failed whenverify ticket, detail: ",err, "data:",string(b))
-		return false
+		log.Println("to json failed "+err.Error())
+		log.Println(string(b))
+		return false, ""
 	}
 	errorCode,err := jsonObj.Get("errorCode").Int()
 	if err != nil {
 		log.Println("get errorCode failed:", err)
-		return false
+		return false, ""
 	}
 	if errorCode == 0 || errorCode == 1 {
 		log.Println("verfyTicket success.")
-		return true
+		tgtTicket, err := jsonObj.Get("data").Get("Ticket").String()
+		if err != nil {
+			log.Println("get tgt ticket failed, detail: %s", err.Error())
+			return false, ""
+		}
+		return true, tgtTicket
+	}else{
+		log.Println("verfy ticket failed:")
 	}
-	return false
+
+	return false, ""
 }

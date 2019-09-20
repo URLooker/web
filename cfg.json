@@ -7,8 +7,8 @@
         "rotationTime": 1
     },
     "sso": {
-        "serverUrl": "https://sso-cas.gridsumdissector.com",
-        "serviceUrl": "http://10.201.82.28:1984/auth/login"
+        "serverUrl": "http://192.168.10.115",
+        "serviceUrl": "http://10.139.14.143:1984/auth/login"
     },
     "admins":["leiyupeng","admin"],
     "salt": "have fun!",
@@ -21,7 +21,7 @@
         "listen": "0.0.0.0:1985"
     },
     "mysql": {
-        "addr": "root:test456@tcp(10.201.82.28:3306)/urlooker?charset=utf8&&loc=Asia%2FShanghai",
+        "addr": "root:admin123@tcp(192.168.10.60:3306)/urlooker?charset=utf8&&loc=Asia%2FShanghai",
         "idle": 10,
         "max": 20
     },
@@ -45,10 +45,7 @@
     "falcon":{
         "enable": true,
         "addrs": [
-            "10.203.40.143:8433",
-            "10.200.200.71:8433",
-            "10.201.81.120:8433",
-            "10.202.80.139:8433"
+            "192.168.10.60:8433"
         ],
         "timeout": 3000,
         "interval": 60
