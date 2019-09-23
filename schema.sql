@@ -2,26 +2,35 @@ CREATE DATABASE `urlooker`;
 USE urlooker;
 
 DROP TABLE IF EXISTS `strategy`;
-CREATE TABLE `strategy` (
+CREATE TABLE `strategy` ( 
   `id`          int(10)         unsigned NOT NULL AUTO_INCREMENT,
   `url`         varchar(1024)   NOT NULL,
   `enable`      int(1)          NOT NULL DEFAULT 1,
   `keywords`    varchar(255)    NOT NULL DEFAULT '',
+  `endpoint`    varchar(255)    NOT NULL DEFAULT '',
   `timeout`     varchar(255)    NOT NULL DEFAULT '',
   `creator`     varchar(255)    NOT NULL DEFAULT '',
-  `data`        varchar(1024)   NOT NULL DEFAULT '',
-  `ip`          varchar(255)    NOT NULL DEFAULT '',
-  `expect_code` varchar(255)    NOT NULL DEFAULT '',
+  `data`        text            NOT NULL DEFAULT '',
+  `ip`          varchar(255)    NOT NULL DEFAULT '', 
+  `expect_code` varchar(255)    NOT NULL DEFAULT '', 
   `tag`         varchar(255)    NOT NULL DEFAULT '',
-  `note`        varchar(255)    NOT NULL DEFAULT '',
+  `header`      text            NOT NULL DEFAULT '',
+  `endpoint`    varchar(255)    NOT NULL DEFAULT '',
+  `method`      varchar(255)    DEFAULT "get",
+  `header`      text            DEFAULT "",
+  `post_data`   text            DEFAULT "",
+  `note`        text            NOT NULL DEFAULT '',
   `max_step`    int(4)          NOT NULL DEFAULT 3,
   `times`       int(4)          NOT NULL DEFAULT 3,
   `teams`       varchar(32)     NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci; 
 #ALTER TABLE strategy ADD ip varchar(255);
 #ALTER TABLE strategy ADD enable int(1) DEFAULT 1;
-
+#ALTER TABLE strategy ADD endpoint varchar(255) DEFAULT "";
+#ALTER TABLE strategy ADD method varchar(255) DEFAULT "";
+#ALTER TABLE strategy ADD header text DEFAULT "";
+#ALTER TABLE strategy ADD post_data text DEFAULT "";
 
 
 DROP TABLE IF EXISTS `user`;
