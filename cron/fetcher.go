@@ -111,9 +111,9 @@ func newDetectedItem(s *model.Strategy, ip string, idc string) g.DetectedItem {
 
 	schema, domain, port, path := utils.ParseUrl(s.Url)
 	if port == "" {
-		detectedItem.Target = schema + "//" + ip + path
+		detectedItem.Target = schema + "//" + domain + path
 	} else {
-		detectedItem.Target = schema + "//" + ip + ":" + port + path
+		detectedItem.Target = schema + "//" + domain + ":" + port + path
 	}
 
 	detectedItem.Domain = domain
